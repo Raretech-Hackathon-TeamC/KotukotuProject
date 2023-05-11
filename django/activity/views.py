@@ -10,13 +10,15 @@ from .forms import ActivityRecordForm
 from categories.models import Category, ActivityCategory
 from datetime import timedelta, date
 import json
+from categories.views import CategoryListView
 
 # ホーム画面
 class HomeView(LoginRequiredMixin, generic.View):
     def get(self, request, *args, **kwargs):
-        #! todo: 本番環境ではtestを削除
-        categories = Category.objects.filter(user=request.user)
-        return render(request, 'test_home.html', {'categories': categories})
+        request.user = self.request.user
+        category_list = CategoryListView.as_view()(request).context_data['object_list']
+        context = {'category_list': category_list}
+        return render(request, 'test_home.html', context)
 
 # TODO: カテゴリー機能別色分け機能の追加
 # ホーム画面へJson型のデータを送信する(非同期通信)
