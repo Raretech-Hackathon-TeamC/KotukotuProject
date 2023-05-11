@@ -8,6 +8,10 @@
     <h1>Activity List</h1>
     <ul id="activity-list"></ul>
 
+    <a href="{% url 'activity:activity_list' %}">レコード画面</a>
+    <a href="{% url 'activity:activity_add'%}">積み上げを記録する</a>
+    <a href="{% url 'categories:category_add'%}">カテゴリーを作成する</a>
+
     <script>
         // 1. fetch関数を使用してサーバーからデータを取得します
         fetch('/activity/list/ajax_get_data/')
@@ -15,6 +19,7 @@
             .then(data => {
                 // 2. 取得したデータをJavaScriptのオブジェクトに変換します
                 const activities = data.map(activity => ({
+                    id: activity.pk, // レコードのIDを取得
                     date: activity.fields.date,
                     duration: activity.fields.duration,
                     memo: activity.fields.memo,
@@ -24,7 +29,13 @@
                 const activityListElement = document.getElementById('activity-list');
                 activities.forEach(activity => {
                     const listItem = document.createElement('li');
-                    listItem.textContent = `Date: ${activity.date}, Duration: ${activity.duration}, Memo: ${activity.memo}`;
+
+                    // レコードの編集ページへのリンクを作成します
+                    const link = document.createElement('a');
+                    link.href = `/activity/${activity.id}/edit/`; // 編集ページへのURLを設定
+                    link.textContent = `Date: ${activity.date}, Duration: ${activity.duration}, Memo: ${activity.memo}`;
+
+                    listItem.appendChild(link);
                     activityListElement.appendChild(listItem);
                 });
             });

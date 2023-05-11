@@ -52,11 +52,11 @@ class ActivityRecordForm(forms.ModelForm):
 
         # 確認: 選択された日付が未来のものでない
         if activity_date is not None and activity_date > date.today():
-            raise ValidationError("未来の日付は選択できません。")
+            self.add_error('date', "未来の日付は選択できません。")
 
         # 確認:時間が入力されていない
         if duration == 0:
-            raise ValidationError("時間を入力してください。")
+            self.add_error('duration', "時間を入力してください。")
 
         return cleaned_data
 
