@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>積み上げ編集・動作確認用</title>
+</head>
+<body>
+    <h1>Test Activity Edit</h1>
+    <form id="activityRecordForm" method="post" class="activityRecordForm" onsubmit="event.preventDefault(); submitForm();">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">保存</button>
+        <a href="{% url 'activity:activity_list' %}">キャンセル</a>
+        <a href="{% url 'activity:home' %}">ホーム画面</a>
+    </form>
+
+    {# エラー文 #}
+    <div id="errorMessages" style="display: none;">
+        <ul id="errorMessageList">
+        </ul>
+    </div>
+
+    <script>
+    // submitFormという名前の関数を作ります。
+    // この関数はフォームを送信するときに動きます。
+    async function submitForm() {
+        // フォームの中の入力したデータを集めます。
+        const formData = new FormData(document.querySelector('.activityRecordForm'));
+
+        // フォームの中から時間を入力する部分を見つけます。
+        const timeInput = document.querySelector('input[type="time"]');
+        // 入力した時間（例えば "2:30"）を、「時間」と「分」に分けます（この場合は 2と30）。
+        const [hours, minutes] = timeInput.value.split(':').map(Number);
+        // 「時間」を「分」に変えて、それに「分」を足します（この場合は 2時間は120分なので、120分 + 30分 = 150分）。
+        const durationInMinutes = hours * 60 + minutes;
+
+        // 入力したデータに、「duration」という名前で、計算した「分」を追加します。
+        formData.set('duration', durationInMinutes);
+
+        // 入力したデータをインターネットを通じてサーバーに送ります。
+        const response = await fetch('{% url "activity:activity_edit" instance.pk %}', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                // サーバーに送るための特別なコードを追加します。これは安全を確保するためのものです。
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+            },
+        });
+
+        // サーバーからの返事をデータとして読み込みます。
+        const data = await response.json();
+
+        // サーバーからの返事がエラーだった場合、エラーメッセージを表示します。
+        if (!data.success) {
+            const errorMessages = document.querySelector('#errorMessageList');
+            errorMessages.innerHTML = '';
+            for (const [fieldName, errors] of Object.entries(data.errors)) {
+                for (const error of errors) {
+                    const li = document.createElement('li');
+                    li.textContent = `${fieldName}: ${error}`;
+                    errorMessages.appendChild(li);
+                }
+            }
+            document.querySelector('#errorMessages').style.display = 'block';
+        } else {
+            // エラーがない場合、リスト画面に戻ります。
+            location.href = '{% url "activity:activity_list" %}';
+        }
+    }
+    </script>
+</body>
+</html>
+
