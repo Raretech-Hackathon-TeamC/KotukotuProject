@@ -133,7 +133,7 @@ TIME_ZONE = 'Asia/Tokyo'
 # STATIC_ROOTを設定
 # Djangoの管理者画面にHTML、CSS、Javascriptが適用されます
 # STATIC_ROOT = "/static/" ほそまつがコメントアウト。下を追加。
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 STATIC_URL = "/static/"
 

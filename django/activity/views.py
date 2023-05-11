@@ -15,7 +15,7 @@ import json
 class HomeView(LoginRequiredMixin, generic.View):
     def get(self, request, *args, **kwargs):
         #! todo: 本番環境ではtestを削除
-        return render(request, 'test_home.html')
+        return render(request, 'home.html')
 
 # TODO: カテゴリー機能別色分け機能の追加
 # ホーム画面へJson型のデータを送信する(非同期通信)
@@ -77,7 +77,7 @@ class ActivityAddView(LoginRequiredMixin, generic.CreateView):
     model = ActivityRecord
     form_class = ActivityRecordForm
     #! todo: 本番環境ではtestを削除
-    template_name = 'test_activity_add.html'
+    template_name = 'activity_add.html'
     success_url = reverse_lazy('activity:home')
 
     # フォームが有効な場合、リクエストユーザーを設定
@@ -134,7 +134,7 @@ def get_total_days(request):
 class ActivityListView(LoginRequiredMixin, generic.View):
     def get(self, request, *args, **kwargs):
         #! todo: 本番環境ではtestを削除
-        return render(request, 'test_activity_list.html')
+        return render(request, 'activity_list.html')
 
 
 # TODO: カテゴリー変更機能の追加

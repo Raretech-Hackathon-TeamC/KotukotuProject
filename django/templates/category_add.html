@@ -1,69 +1,230 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
+
+{% block body_class %} 
+bg-snow text-textBlack font-NotoSans 
+{% endblock body_class %}
+
+{% load static %}
 
 {% block content %}
-  <h2>カテゴリー追加画面</h2>
-  <form id="categoryAddForm" method="POST">
+<script src="{% static 'static/admin/js/category_add.js' %}"></script>
+
+<!-- ナビゲーションバーを作成 lgは1024pxからのサイズ-->
+<header class="bg-blackGreen w-full fixed top-0 left-0 h-10 lg:h-20 z-10">
+ <div class="container mx-auto px-4 h-full">
+  <nav class="flex items-center justify-between h-full">
+   <div class="flex items-center">
+    <a href="{% url 'activity:home' %}" class="transform hover:scale-105 transition duration-300">
+     <img
+      src="{% static 'static/admin/img/kotukotu_thumbnail.png' %}"
+      alt="サムネイルのカメの画像"
+      class="h-10 lg:h-20 w-auto py-1 object-cover rounded-xl"
+     />
+    </a>
+   </div>
+   <div class="flex items-center">
+    <ul class="hidden md:flex space-x-8 text-white">
+     <li>
+      <a href="{% url 'activity:home' %}" class="hover:underline">ホーム</a>
+     </li>
+     <li>
+      <a href="{% url 'activity:activity_list' %}" class="hover:underline">レコード</a>
+     </li>
+     <li>
+      <a href="{% url 'activity:activity_add' %}" class="hover:underline">入力</a>
+     </li>
+     <li>
+      <a href="{% url 'categories:category_add' %}" class="hover:underline">カテゴリー</a>
+     </li>
+    </ul>
+    <button
+     type="submit"
+     class="bg-white text-blackGreen px-4 py-1 rounded-full ml-4 hidden md:block"
+     onclick="window.location.href='{% url 'users:logout' %}'"
+    >
+     ログアウト
+    </button>
+    <!-- ハンバーガーメニューアイコン（横幅760px以下で表示） -->
+    <button class="md:hidden text-white focus:outline-none" aria-label="メニュー">
+     <!-- 画像を埋め込む -->
+     <img
+      src="{% static 'admin/img/hamburgur.png' %}"
+      alt="ハンバーガーメニュー"
+      class="hamburger-menu md:hidden"
+      style="height: 40px; width: auto; object-fit: contain; float: left"
+     />
+    </button>
+   </div>
+  </nav>
+ </div>
+</header>
+
+<!-- モバイルメニュー（横幅760px以下でハンバーガーメニューを押したら表示） -->
+<div
+ id="mobileMenu"
+ class="hidden fixed top-0 right-0 w-1/2 h-full z-20 bg-blackGreen bg-opacity-80 md:hidden"
+>
+ <!-- 閉じるボタン -->
+ <img
+  id="closeMenuButton"
+  src="{% static 'admin/img/close_button.png' %}"
+  alt="閉じるボタン"
+  class="absolute top-11 right-2 h-6 w-auto cursor-pointer z-30"
+ />
+
+ <!-- メニューのコンテンツが含まれるコンテナ -->
+ <div class="container mx-auto px-4 h-full flex flex-col justify-center items-center z-30">
+  <!-- メニューのリスト -->
+  <ul class="text-white text-center space-y-4">
+   <li>
+    <a href="{% url 'activity:home' %}" class="hover:underline">ホーム</a>
+   </li>
+   <li>
+    <a href="{% url 'activity:activity_list' %}" class="hover:underline">レコード</a>
+   </li>
+   <li>
+    <a href="{% url 'activity:activity_add' %}" class="hover:underline">入力画面</a>
+   </li>
+   <li>
+    <a href="{% url 'categories:category_add' %}" class="hover:underline">カテゴリー</a>
+   </li>
+   <li>
+    <button
+     type="submit"
+     class="bg-white text-blackGreen px-4 py-1 rounded-full mt-4"
+     onclick="window.location.href='{% url 'users:logout' %}'"
+    >
+     ログアウト
+    </button>
+   </li>
+  </ul>
+ </div>
+</div>
+
+<!-- 左上のホーム＞のやつを作成 -->
+<div class="container mx-auto px-4 pt-20 text-textBlack">
+ <nav class="text-lg">
+  <a href="{% url 'activity:home' %}" class="hover:underline text-#474747">ホーム</a>
+  <span> &gt; </span>
+  <span>カテゴリー追加</span>
+ </nav>
+</div>
+
+<!-- タイトルの作成 -->
+<h1 class="container mx-auto px-4 pt-4 text-center bg-snow text-xl md:text-3xl text-textBlack z-20">
+  カテゴリーを追加する
+ </h1>
+ <hr class="mx-10 my-4 border-2 border-blackGreen shadow-md z-20" />
+ 
+ <div class="container mx-auto px-4 py-10 z-30">
+  <form id="categoryAddForm" method="POST" class="grid grid-cols-1 gap-6 max-w-screen-xl mx-auto activityRecordForm">
     {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">作成</button>
-    <a href="{% url 'activity:home' %}">戻る</a>
+   <!-- カテゴリーネーム作成 -->
+   <div class="mx-auto w-full md:w-3/4 py-2 bg-blackGreen text-textBlack rounded-lg flex items-center justify-center">
+     {{ form.name.label_tag }}
+     {{ form.name }}
+   </div>
+
+   <!-- 目標の作成 -->
+   <div class="mx-auto w-full md:w-3/4 py-2 bg-blackGreen text-textBlack rounded-lg flex items-center justify-center">
+     {{ form.goal.label_tag }}
+     {{ form.goal }}
+   </div>
+
+   <!-- カラーの選択 -->
+   <div class="mx-auto w-full md:w-3/4 py-2 bg-blackGreen text-textBlack rounded-lg flex items-center justify-center">
+     {{ form.color_code.label_tag }}
+     {{ form.color_code }}
+   </div>
+
+
+        <!-- 色の選択。押したらクリップボードにコピーされる -->
+      <div class="flex flex-wrap justify-center space-x-4">
+        <div class="w-16 h-16 md:w-16 md:h-16 bg-[#DAD4B7] rounded text-center line-height[6rem] md:line-height[4rem] cursor-pointer text-base md:text-xs" onclick="copyToClipboard('#DAD4B7')">#DAD4B7</div>
+        <div class="w-16 h-16 md:w-16 md:h-16 bg-[#B7C1DA] rounded text-center line-height[6rem] md:line-height[4rem] cursor-pointer text-base md:text-xs" onclick="copyToClipboard('#B7C1DA')">#B7C1DA</div>
+        <div class="w-16 h-16 md:w-16 md:h-16 bg-[#DABEB7] rounded text-center line-height[6rem] md:line-height[4rem] cursor-pointer text-base md:text-xs" onclick="copyToClipboard('#DABEB7')">#DABEB7</div>
+        <div class="w-16 h-16 md:w-16 md:h-16 bg-[#DAC6B7] rounded text-center line-height[6rem] md:line-height[4rem] cursor-pointer text-base md:text-xs" onclick="copyToClipboard('#DAC6B7')">#DAC6B7</div>
+        <div class="w-16 h-16 md:w-16 md:h-16 bg-[#CFB7DA] rounded text-center line-height[6rem] md:line-height[4rem] cursor-pointer text-base md:text-xs" onclick="copyToClipboard('#CFB7DA')">#CFB7DA</div>
+        <div class="w-16 h-16 md:w-16 md:h-16 bg-[#B7D6DA] rounded text-center line-height[6rem] md:line-height[4rem] cursor-pointer text-base md:text-xs" onclick="copyToClipboard('#B7D6DA')">#B7D6DA</div>
+        <div class="w-16 h-16 md:w-16 md:h-16 bg-[#C6DAB7] rounded text-center line-height[6rem] md:line-height[4rem] cursor-pointer text-base md:text-xs" onclick="copyToClipboard('#C6DAB7')">#C6DAB7</div>
+      </div>
+
+
+
+    <div class="flex justify-center mt-6">
+      <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-500">作成</button>
+      <a href="{% url 'activity:home' %}" class="ml-3 px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-300">戻る</a>
+    </div>
   </form>
+</div>
 
-  {# モーダル for deleted category #}
-  <div id="restoreContainer" style="display:none;">
-    <p>過去に同じカテゴリーを作成したことがあるようです。カテゴリーを引き継ぎますか？</p>
-    <button id="restoreCategory">復元・引き継ぎ</button>
-    <button id="createNewCategory">新しくカテゴリーを作成</button>
-  </div>
+{% comment %} クリップボード保存機能を持たせている。 {% endcomment %}
+<script src="{% static 'static/admin/js/category_add.js' %}"></script>
 
-  {# モーダル for existing category #}
-  <div id="existingContainer" style="display:none;">
-    <p>既に同じ名前のカテゴリーが存在するようです。カテゴリーを作成しますか？</p>
-    <button id="createNewCategoryForExisting">はい</button>
-    <button id="cancelNewCategoryForExisting">キャンセル</button>
-  </div>
 
-  <script>
-  document.getElementById("categoryAddForm").addEventListener("submit", function(event) {
-    event.preventDefault();
 
-    let categoryName = document.getElementsByName("name")[0].value;
-    let formData = new FormData(event.target);
+{% comment %} 以下はモーダル画面。バックエンドが記載したもの。別のissueでコーディング予定。 {% endcomment %}
 
-    fetch("{% url 'categories:check_duplicate_add' %}", {
-      method: "POST",
-      body: JSON.stringify({ "name": categoryName }),
-      headers: {
-        "Content-Type": "application/json",
-        "X-CSRFToken": "{{ csrf_token }}"
-      }
-    }).then(response => response.json()).then(data => {
-      if (data.duplicate) {
-        if (data.category_id !== null) {
-          // 削除されたカテゴリーと同じ名前の場合 (is_deleted = true)
-          document.getElementById("restoreContainer").style.display = "block";
-          let categoryId = data.category_id;
-          document.getElementById("restoreCategory").onclick = function() {
-            location.href = "{% url 'categories:category_restore' 0 %}".replace("0", categoryId);
-          }
-          document.getElementById("createNewCategory").onclick = function() {
-            event.target.submit();
-          }
-        } else {
-          // 既に存在するカテゴリーと同じ名前の場合 (is_deleted = false)
-          document.getElementById("existingContainer").style.display = "block";
-          document.getElementById("createNewCategoryForExisting").onclick = function() {
-            event.target.submit();
-          }
-          document.getElementById("cancelNewCategoryForExisting").onclick = function() {
-            document.getElementById("existingContainer").style.display = "none";
-          }
-        }
-      } else {
-        // 同じ名前のカテゴリーが存在しない場合
-        event.target.submit();
-      }
-    });
-  });
+
+{# モーダル for deleted category #}
+<div id="restoreContainer" style="display: none">
+ <p>過去に同じカテゴリーを作成したことがあるようです。カテゴリーを引き継ぎますか？</p>
+ <button id="restoreCategory">復元・引き継ぎ</button>
+ <button id="createNewCategory">新しくカテゴリーを作成</button>
+</div>
+
+{# モーダル for existing category #}
+<div id="existingContainer" style="display: none">
+ <p>既に同じ名前のカテゴリーが存在するようです。カテゴリーを作成しますか？</p>
+ <button id="createNewCategoryForExisting">はい</button>
+ <button id="cancelNewCategoryForExisting">キャンセル</button>
+</div>
+
+<script>
+ document.getElementById("categoryAddForm").addEventListener("submit", function (event) {
+  event.preventDefault();
+
+  let categoryName = document.getElementsByName("name")[0].value;
+  let formData = new FormData(event.target);
+
+  fetch("{% url 'categories:check_duplicate_add' %}", {
+   method: "POST",
+   body: JSON.stringify({ name: categoryName }),
+   headers: {
+    "Content-Type": "application/json",
+    "X-CSRFToken": "{{ csrf_token }}"
+   }
+  })
+   .then(response => response.json())
+   .then(data => {
+    if (data.duplicate) {
+     if (data.category_id !== null) {
+      // 削除されたカテゴリーと同じ名前の場合 (is_deleted = true)
+      document.getElementById("restoreContainer").style.display = "block";
+      let categoryId = data.category_id;
+      document.getElementById("restoreCategory").onclick = function () {
+       location.href = "{% url 'categories:category_restore' 0 %}".replace("0", categoryId);
+      };
+      document.getElementById("createNewCategory").onclick = function () {
+       event.target.submit();
+      };
+     } else {
+      // 既に存在するカテゴリーと同じ名前の場合 (is_deleted = false)
+      document.getElementById("existingContainer").style.display = "block";
+      document.getElementById("createNewCategoryForExisting").onclick = function () {
+       event.target.submit();
+      };
+      document.getElementById("cancelNewCategoryForExisting").onclick = function () {
+       document.getElementById("existingContainer").style.display = "none";
+      };
+     }
+    } else {
+     // 同じ名前のカテゴリーが存在しない場合
+     event.target.submit();
+    }
+   });
+ });
 </script>
+
+
 {% endblock %}
