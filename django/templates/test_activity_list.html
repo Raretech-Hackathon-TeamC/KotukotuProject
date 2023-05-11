@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Test Activity List</title>
+</head>
+<body>
+    <h1>Activity List</h1>
+    <ul id="activity-list"></ul>
+
+    <script>
+        // 1. fetch関数を使用してサーバーからデータを取得します
+        fetch('/activity/list/ajax_get_data/')
+            .then(response => response.json())
+            .then(data => {
+                // 2. 取得したデータをJavaScriptのオブジェクトに変換します
+                const activities = data.map(activity => ({
+                    date: activity.fields.date,
+                    duration: activity.fields.duration,
+                    memo: activity.fields.memo,
+                }));
+
+                // 3. JavaScriptのオブジェクトからHTML要素を生成します
+                const activityListElement = document.getElementById('activity-list');
+                activities.forEach(activity => {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = `Date: ${activity.date}, Duration: ${activity.duration}, Memo: ${activity.memo}`;
+                    activityListElement.appendChild(listItem);
+                });
+            });
+    </script>
+</body>
+</html>

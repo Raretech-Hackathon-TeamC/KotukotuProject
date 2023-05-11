@@ -9,11 +9,17 @@ from .models import ActivityRecord
 from .forms import ActivityRecordForm
 from categories.models import Category, ActivityCategory
 from datetime import timedelta, date
+import json
 
 # ホーム画面
-# TODO: カテゴリー機能別色分け機能の追加
 class HomeView(LoginRequiredMixin, generic.View):
+    def get(self, request, *args, **kwargs):
+        #! todo: 本番環境ではtestを削除
+        return render(request, 'test_home.html')
 
+# TODO: カテゴリー機能別色分け機能の追加
+# ホーム画面へJson型のデータを送信する(非同期通信)
+class HomeAjaxView(LoginRequiredMixin, generic.View):
     def get(self, request, *args, **kwargs):
         # 過去すべてのレコードを取得する
         end_date = date.min
@@ -66,12 +72,11 @@ class HomeView(LoginRequiredMixin, generic.View):
 
 
 # 積み上げ追加画面
-# TODO:カテゴリー選択機能追加
 class ActivityAddView(LoginRequiredMixin, generic.CreateView):
     # モデル・フォーム・テンプレート・リダイレクト先の設定
     model = ActivityRecord
     form_class = ActivityRecordForm
-    #! todo: 本番環境では [template_name = 'activity_add.html']へ変更
+    #! todo: 本番環境ではtestを削除
     template_name = 'test_activity_add.html'
     success_url = reverse_lazy('activity:home')
 
@@ -128,11 +133,28 @@ def get_total_days(request):
 # レコード画面(積み上げ一覧)
 class ActivityListView(LoginRequiredMixin, generic.View):
     def get(self, request, *args, **kwargs):
-        # ログインしているユーザーの記録を14日分降順で
+        #! todo: 本番環境ではtestを削除
+        return render(request, 'test_activity_list.html')
+
+
+# TODO: カテゴリー変更機能の追加
+# レコード画面へjson形式でデータを送信(非同期通信)
+class ActivityListAjaxView(LoginRequiredMixin, generic.View):
+    # GETリクエストを処理
+    def get(self, request, *args, **kwargs):
+        # ログインユーザーの最新14件の活動を取得
         activities = ActivityRecord.objects.filter(user=request.user).order_by('-date')[:14]
-        # json型のデータに変換し送信
+
+        # 取得した活動をJSON文字列に変換
         data = serializers.serialize('json', activities, fields=('date', 'duration', 'memo'))
+
+        # JSON文字列をPythonの辞書リストに変換
+        data = json.loads(data)
+
+        # 辞書リストをJSON形式でレスポンスとして返す
         return JsonResponse(data, safe=False)
+
+
 
 
 # 積み上げ編集画面

@@ -5,7 +5,9 @@ app_name = 'activity'
 
 urlpatterns = [
     path('', views.HomeView.as_view(), name='home'),
+    path('ajax_get_data/', views.HomeAjaxView.as_view(), name='home_ajax'),
     path('list/', views.ActivityListView.as_view(), name='activity_list'),
+    path('list/ajax_get_data/', views.ActivityListAjaxView.as_view(), name='list_ajax'),
     path('add/', views.ActivityAddView.as_view(), name='activity_add'),
     path('add/ajax_submit/', views.ActivityAddView.as_view(), name='activity_add_ajax_submit'),
     path('<int:pk>/edit/', views.ActivityEditView.as_view(), name='activity_edit'),

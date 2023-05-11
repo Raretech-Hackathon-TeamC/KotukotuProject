@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Chart.jsの読み込み -->
+    <title>Home</title>
+</head>
+<body>
+    <h2>累計日数: <span id="total-days">...</span></h2>
+    <h2>累計時間: <span id="total-duration">...</span></h2>
+
+    <canvas id="activityChart"></canvas> <!-- グラフ表示場所 -->
+
+    <script>
+        // 非同期通信でデータを取得
+        fetch('/activity/ajax_get_data/')
+            .then(response => response.json())
+            .then(data => {
+                // 累計日数と累計時間を更新
+                document.getElementById('total-days').textContent = data.total_days;
+                document.getElementById('total-duration').textContent = data.total_duration;
+
+                // グラフを作成
+                new Chart(document.getElementById('activityChart'), {
+                    type: 'bar',
+                    data: {
+                        labels: data.date_list, // X軸ラベルに日付を設定
+                        datasets: [{
+                            label: '活動時間（分）',
+                            data: data.duration_list, // Y軸データに活動時間を設定
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)', // バーの色
+                            borderColor: 'rgba(75, 192, 192, 1)', // バーのボーダーカラー
+                            borderWidth: 1 // バーのボーダー幅
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            })
+            .catch(error => console.error('Error:', error));
+    </script>
+</body>
+</html>
