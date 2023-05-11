@@ -39,7 +39,7 @@
         formData.set('duration', durationInMinutes);
 
         // 入力したデータをインターネットを通じてサーバーに送ります。
-        const response = await fetch('{% url "activity:activity_edit" instance.pk %}', {
+        const response = await fetch('{% url "activity:activity_edit" object.pk %}', {
             method: 'POST',
             body: formData,
             headers: {
@@ -71,4 +71,3 @@
     </script>
 </body>
 </html>
-

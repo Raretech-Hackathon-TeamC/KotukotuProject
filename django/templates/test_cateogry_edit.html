@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <h2>カテゴリー編集画面</h2>
+  <form id="categoryEditForm" method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">保存</button>
+    <a href="{% url 'activity:home' %}">戻る</a>
+  </form>
+
+  {# モーダル for existing category #}
+  <div id="existingContainer" style="display:none;">
+    <p>既に同じ名前のカテゴリーが存在するようです。カテゴリーを編集しますか？</p>
+    <button id="createNewCategoryForExisting">はい</button>
+    <button id="cancelNewCategoryForExisting">キャンセル</button>
+  </div>
+
+  <script>
+  document.getElementById("categoryEditForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    let categoryName = document.getElementsByName("name")[0].value;
+    let exclude_id = "{{ object.id }}";
+    let formData = new FormData(event.target);
+
+    fetch("{% url 'categories:check_duplicate_edit' %}", {
+      method: "POST",
+      body: JSON.stringify({ "name": categoryName, "exclude_id": exclude_id }),
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": "{{ csrf_token }}"
+      }
+    }).then(response => response.json()).then(data => {
+      if (data.duplicate) {
+        document.getElementById("existingContainer").style.display = "block";
+        document.getElementById("createNewCategoryForExisting").onclick = function() {
+          event.target.submit();
+        }
+        document.getElementById("cancelNewCategoryForExisting").onclick = function() {
+          document.getElementById("existingContainer").style.display = "none";
+        }
+      } else {
+        event.target.submit();
+      }
+    });
+  });
+  </script>
+
+</body>
+</html>

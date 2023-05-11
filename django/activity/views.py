@@ -155,12 +155,11 @@ class ActivityListAjaxView(LoginRequiredMixin, generic.View):
         return JsonResponse(data, safe=False)
 
 
-
-
 # 積み上げ編集画面
 class ActivityEditView(LoginRequiredMixin, generic.UpdateView):
     model = ActivityRecord
     form_class = ActivityRecordForm
+    #! todo: 本番環境ではtestを削除
     template_name = 'test_activity_edit.html'
     success_url = reverse_lazy('activity:activity_list')
 

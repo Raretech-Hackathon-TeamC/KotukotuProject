@@ -11,8 +11,7 @@
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit">保存</button>
-        <a href="{% url 'activity:activity_list' %}">キャンセル</a>
-        <a href="{% url 'activity:home' %}">ホーム画面</a>
+        <a href="{% url 'activity:home' %}">キャンセル</a>
     </form>
 
     {# モーダル #}
@@ -47,7 +46,7 @@
         formData.set('duration', durationInMinutes);
 
         // 入力したデータをインターネットを通じてサーバーに送ります。
-        const response = await fetch('{% url "activity:activity_edit_ajax_submit" %}', {
+        const response = await fetch('{% url "activity:activity_add" %}', {
             method: 'POST',
             body: formData,
             headers: {

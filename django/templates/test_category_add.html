@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <h2>カテゴリー追加画面</h2>
+  <form id="categoryAddForm" method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">作成</button>
+    <a href="{% url 'activity:home' %}">戻る</a>
+  </form>
+
+  {# モーダル for deleted category #}
+  <div id="restoreContainer" style="display:none;">
+    <p>過去に同じカテゴリーを作成したことがあるようです。カテゴリーを引き継ぎますか？</p>
+    <button id="restoreCategory">復元・引き継ぎ</button>
+    <button id="createNewCategory">新しくカテゴリーを作成</button>
+  </div>
+
+  {# モーダル for existing category #}
+  <div id="existingContainer" style="display:none;">
+    <p>既に同じ名前のカテゴリーが存在するようです。カテゴリーを作成しますか？</p>
+    <button id="createNewCategoryForExisting">はい</button>
+    <button id="cancelNewCategoryForExisting">キャンセル</button>
+  </div>
+
+  <script>
+  document.getElementById("categoryAddForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    let categoryName = document.getElementsByName("name")[0].value;
+    let formData = new FormData(event.target);
+
+    fetch("{% url 'categories:check_duplicate_add' %}", {
+      method: "POST",
+      body: JSON.stringify({ "name": categoryName }),
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": "{{ csrf_token }}"
+      }
+    }).then(response => response.json()).then(data => {
+      if (data.duplicate) {
+        if (data.category_id !== null) {
+          // 削除されたカテゴリーと同じ名前の場合 (is_deleted = true)
+          document.getElementById("restoreContainer").style.display = "block";
+          let categoryId = data.category_id;
+          document.getElementById("restoreCategory").onclick = function() {
+            location.href = "{% url 'categories:category_restore' 0 %}".replace("0", categoryId);
+          }
+          document.getElementById("createNewCategory").onclick = function() {
+            event.target.submit();
+          }
+        } else {
+          // 既に存在するカテゴリーと同じ名前の場合 (is_deleted = false)
+          document.getElementById("existingContainer").style.display = "block";
+          document.getElementById("createNewCategoryForExisting").onclick = function() {
+            event.target.submit();
+          }
+          document.getElementById("cancelNewCategoryForExisting").onclick = function() {
+            document.getElementById("existingContainer").style.display = "none";
+          }
+        }
+      } else {
+        // 同じ名前のカテゴリーが存在しない場合
+        event.target.submit();
+      }
+    });
+  });
+</script>
+</body>
+</html>

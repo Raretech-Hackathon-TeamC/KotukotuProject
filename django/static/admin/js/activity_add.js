@@ -20,7 +20,7 @@ async function submitForm() {
  // フォームデータを取得
  const formData = new FormData(document.querySelector(".activityRecordForm"));
  // フォームデータを送信
- const response = await fetch('{% url "activity:activity_add_ajax_submit" %}', {
+ const response = await fetch('{% url "activity:activity_add" %}', {
   method: "POST",
   body: formData,
   headers: {

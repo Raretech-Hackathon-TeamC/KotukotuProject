@@ -20,7 +20,8 @@ from .forms import CategoryForm
 class CategoryAddView(LoginRequiredMixin, generic.CreateView):
     model = Category
     form_class = CategoryForm
-    template_name = 'category_add.html'
+    #! todo: 本番環境ではtestを削除
+    template_name = 'test_category_add.html'
     success_url = reverse_lazy('activity:home')
 
     def form_valid(self, form):
@@ -51,19 +52,12 @@ def category_restore(request, pk):
     category.save()
     return HttpResponseRedirect(reverse_lazy('activity:home'))
 
-
-# カテゴリー復元
-def category_restore(request, pk):
-    category = Category.objects.get(pk=pk, user=request.user)
-    category.is_deleted = False
-    category.save()
-    return HttpResponseRedirect(reverse_lazy('activity:home'))
-
 # カテゴリー編集
 class CategoryEditView(LoginRequiredMixin, generic.UpdateView):
     model = Category
     form_class = CategoryForm
-    template_name = 'category_edit.html'
+    #!　本番環境ではtestを削除
+    template_name = 'test_category_edit.html'
     success_url = reverse_lazy('activity:home')
 
     def form_valid(self, form):
