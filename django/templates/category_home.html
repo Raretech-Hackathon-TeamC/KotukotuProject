@@ -9,17 +9,12 @@
 <body>
     <h2>累計日数: <span id="total-days">...</span></h2>
     <h2>累計時間: <span id="total-duration">...</span></h2>
-    <h1>カテゴリー別アクティビティ一覧</h1>
-    <ul>
-        {% for category, activities in activities_by_category.items %}
-          <li>{{ category }}</li>
-          <ul>
-            {% for activity in activities %}
-              <li>{{ activity }}</li>
-            {% endfor %}
-          </ul>
-        {% endfor %}
-      </ul>
+    <h1>{{ category.name }}</h1>
+    {% if activity_record %}
+    <p>活動時間: {{ total_activity_time }}分</p>
+    {% else %}
+    <p>活動時間はまだありません。</p>
+    {% endif %}
 
     {% comment %} <canvas id="activityChart"></canvas> <!-- グラフ表示場所 --> {% endcomment %}
 

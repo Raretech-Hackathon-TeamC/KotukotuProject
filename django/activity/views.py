@@ -15,7 +15,8 @@ import json
 class HomeView(LoginRequiredMixin, generic.View):
     def get(self, request, *args, **kwargs):
         #! todo: 本番環境ではtestを削除
-        return render(request, 'test_home.html')
+        categories = Category.objects.filter(user=request.user)
+        return render(request, 'test_home.html', {'categories': categories})
 
 # TODO: カテゴリー機能別色分け機能の追加
 # ホーム画面へJson型のデータを送信する(非同期通信)

@@ -10,6 +10,11 @@
     <h2>累計日数: <span id="total-days">...</span></h2>
     <h2>累計時間: <span id="total-duration">...</span></h2>
 
+    // 各カテゴリーへの画面遷移
+    {% for category in categories %}
+        <a href="{% url 'categories:category_home' pk=category.pk %}">{{ category.name }}</a>
+    {% endfor %}
+
     <canvas id="activityChart"></canvas> <!-- グラフ表示場所 -->
 
     <script>
