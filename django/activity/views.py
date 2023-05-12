@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.views import generic
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Count
+from django.db.models import Count, Prefetch
 from django.http import JsonResponse
 from django.core import serializers
 from .models import ActivityRecord
@@ -136,23 +136,48 @@ class ActivityListView(LoginRequiredMixin, generic.View):
         #! todo: 本番環境ではtestを削除
         return render(request, 'test_activity_list.html')
 
-
-# TODO: カテゴリー変更機能の追加
-# レコード画面へjson形式でデータを送信(非同期通信)
+# レコード画面にJson型のデータを送信する(非同期通信)
 class ActivityListAjaxView(LoginRequiredMixin, generic.View):
-    # GETリクエストを処理
+    # getリクエストの処理
     def get(self, request, *args, **kwargs):
-        # ログインユーザーの最新14件の活動を取得
-        activities = ActivityRecord.objects.filter(user=request.user).order_by('-date')[:14]
+        # ユーザーのアクティビティレコードを取得
+        activities = ActivityRecord.objects.filter(user=request.user)
 
-        # 取得した活動をJSON文字列に変換
-        data = serializers.serialize('json', activities, fields=('date', 'duration', 'memo'))
+        # アクティビティに紐づくカテゴリーを一括で取得 (N+1問題の解消)
+        # prefetch_relatedを使って、ActivityCategoryとCategoryを一度に取得
+        activities = activities.prefetch_related(
+            Prefetch(
+                'activitycategory_set',
+                queryset=ActivityCategory.objects.select_related('category'),
+                to_attr='fetched_categories'
+            )
+        )
 
-        # JSON文字列をPythonの辞書リストに変換
-        data = json.loads(data)
+        # 各アクティビティのデータを格納するためのリストを作成
+        activities_data = []
 
-        # 辞書リストをJSON形式でレスポンスとして返す
-        return JsonResponse(data, safe=False)
+        # 各アクティビティレコードについて処理を行う
+        for activity in activities:
+            # fetched_categories属性の存在チェック
+            # fetched_categories属性が存在する場合、その属性からカテゴリー名を取得
+            # 存在しない場合、カテゴリーを空文字列とする
+            if hasattr(activity, 'fetched_categories'):
+                activity_categories = [activity_category.category for activity_category in activity.fetched_categories]
+                category_color = ', '.join([category.color_code for category in activity_categories])
+            else:
+                category_color = ''
+
+            # 各アクティビティのデータをリストに追加
+            activities_data.append({
+                'pk': activity.pk,
+                'date': activity.date.strftime('%Y-%m-%d'),
+                'duration': round(activity.duration / 60, 1),
+                'memo': activity.memo,
+                'category_color': category_color,
+            })
+
+        # JSON形式でレスポンスを返す
+        return JsonResponse({'activities': activities_data})
 
 
 # 積み上げ編集画面
