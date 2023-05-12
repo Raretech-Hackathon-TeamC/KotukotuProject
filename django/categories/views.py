@@ -15,7 +15,7 @@ import datetime
 from django.db.models import Q
 
 # Categoryの情報をJSON形式で返すView
-class CategoryHomeView(generic.View):
+class CategoryHomeAjaxView(generic.View):
     def get(self, request, *args, **kwargs):
         # ユーザーが作成したカテゴリーの一覧を取得
         categories = Category.objects.filter(user=request.user, is_deleted=False).annotate(
@@ -38,25 +38,6 @@ def minutes_to_hours(minutes):
     hours = minutes // 60
     minutes = minutes % 60
     return f"{hours}:{minutes:02d}"
-
-# カテゴリーの一覧を表示するView
-class CategoryListAjaxView(generic.ListView):
-    model = Category
-    context_object_name = 'categories'
-
-    def get_queryset(self):
-        qs = super().get_queryset()
-        qs = qs.filter(user=self.request.user, is_deleted=False)
-        qs = qs.annotate(total_duration=Sum('activitycategory__activity_record__duration'))  # カテゴリーの総時間を計算
-        qs = qs.exclude(Q(activitycategory__activity_record__duration=None) | Q(total_duration=None))
-        return qs
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        for category in context['categories']:
-            category.total_duration = minutes_to_hours(category.total_duration)  # カテゴリーの総時間を計算して保存
-            category.color_code = category.color_code  # カテゴリーの色情報を保存
-        return context
 
 
 # TODO: カテゴリー毎のhome画面
