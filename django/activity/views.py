@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.views import generic
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Count
 from django.http import JsonResponse
@@ -10,16 +10,16 @@ from .forms import ActivityRecordForm
 from categories.models import Category, ActivityCategory
 from datetime import timedelta, date
 import json
-from categories.views import CategoryListView
+from categories.views import CategoryHomeView
 
 # ホーム画面
-class HomeView(LoginRequiredMixin, generic.View):
-    def get(self, request, *args, **kwargs):
-        request.user = self.request.user
-        category_list = CategoryListView.as_view()(request).context_data['categories']
-        context = {'category_list': category_list}
-        #! todo: 本番環境ではtestを削除
-        return render(request, 'test_home.html', context)
+class HomeView(LoginRequiredMixin, generic.TemplateView):
+    template_name = 'test_home.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['categories_json_url'] = reverse('categories:categories_json')
+        return context
 
 # TODO: カテゴリー機能別色分け機能の追加
 # ホーム画面へJson型のデータを送信する(非同期通信)

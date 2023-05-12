@@ -10,16 +10,30 @@
     <h2>累計日数: <span id="total-days">...</span></h2>
     <h2>累計時間: <span id="total-duration">...</span></h2>
 
-    {% comment %} 各カテゴリーへの画面遷移 {% endcomment %}
-    <h1>Categories</h1>
-    <ul>
-        {% for category in category_list %}
-            <li>
-                <a href="{% url 'categories:category_detail' pk=category.pk %}">{{ category.name }} {{ category.total_duration }} {{ category.color_code }}</a>
-            </li>
-        {% endfor %}
-    </ul>
-
+    {% block content %}
+    <div id="category-data"></div>
+    </div>
+  {% endblock %}
+    {% block extra_js %}
+    <script>
+        fetch('{{ categories_json_url }}')
+          .then(response => response.json())
+          .then(categories => {
+            const categoryDataElement = document.getElementById('category-data');
+            const categoryList = document.createElement('ul');
+            categories.forEach(category => {
+              const categoryElement = document.createElement('li');
+              const categoryLink = document.createElement('a');  // リンクを作成
+              categoryLink.href = `/categories/${category.id}/`;  // 適切なURLを設定
+              categoryLink.innerText = `${category.name}: ${category.total_duration}`;
+              categoryLink.style.color = category.color_code;
+              categoryElement.appendChild(categoryLink);
+              categoryList.appendChild(categoryElement);
+            });
+            categoryDataElement.appendChild(categoryList);
+          });
+      </script>
+  {% endblock %}
     <canvas id="activityChart"></canvas> <!-- グラフ表示場所 -->
 
     <a href="{% url 'activity:activity_list' %}">レコード画面</a>

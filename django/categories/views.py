@@ -18,6 +18,23 @@ from django.db.models import Q
 # TODO: ホーム画面にカテゴリー毎の累計活動時間の表示
     #* activity:HomeView内でimportする必要あり
     #* カテゴリーが削除済み(is_deleted = Ture)の場合は表示しない
+
+class CategoryHomeView(generic.View):
+    def get(self, request, *args, **kwargs):
+        categories = Category.objects.filter(user=request.user, is_deleted=False).annotate(
+            total_duration=Sum('activitycategory__activity_record__duration')
+        ).exclude(Q(activitycategory__activity_record__duration=None) | Q(total_duration=None))
+        categories_data = [
+            {
+                'id': category.id,
+                'name': category.name,
+                'total_duration': minutes_to_hours(category.total_duration),
+                'color_code': category.color_code,
+            }
+            for category in categories
+        ]
+        return JsonResponse(categories_data, safe=False)
+
 def minutes_to_hours(minutes):
     hours = minutes // 60
     minutes = minutes % 60
@@ -40,6 +57,8 @@ class CategoryListView(generic.ListView):
             category.total_duration = minutes_to_hours(category.total_duration)
             category.color_code = category.color_code
         return context
+
+
 
 # TODO: カテゴリー毎のhome画面
     #* カテゴリー毎の累計時間・累計日数の表示
