@@ -27,7 +27,7 @@
             .then(data => {
                 // 2. 取得したデータをJavaScriptのオブジェクトに変換します
                 const activities = data.activities.map(activity => ({
-                    pk: activity.pk, // レコードのIDを取得
+                    id: activity.id, // レコードのIDを取得
                     date: activity.date,
                     duration: activity.duration,
                     memo: activity.memo,
@@ -41,7 +41,7 @@
 
                     // レコードの編集ページへのリンクを作成します
                     const link = document.createElement('a');
-                    link.href = `/activity/${activity.pk}/edit/`; // 編集ページへのURLを設定
+                    link.href = `/activity/${activity.id}/edit/`; // 編集ページへのURLを設定
                     link.textContent = `Date: ${activity.date}, Duration: ${activity.duration}, Memo: ${activity.memo}`;
                     link.style.backgroundColor = activity.color || '#ffffff'; // カテゴリーの色を背景色に設定（色がなければ白色になります）
                     link.classList.add('activity-link'); // CSSスタイルを適用するためのクラスを追加します

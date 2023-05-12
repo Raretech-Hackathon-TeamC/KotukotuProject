@@ -169,7 +169,7 @@ class ActivityListAjaxView(LoginRequiredMixin, generic.View):
 
             # 各アクティビティのデータをリストに追加
             activities_data.append({
-                'pk': activity.pk,
+                'id': activity.pk,
                 'date': activity.date.strftime('%Y-%m-%d'),
                 'duration': round(activity.duration / 60, 1),
                 'memo': activity.memo,
