@@ -10,10 +10,11 @@ from .forms import ActivityRecordForm
 from categories.models import Category, ActivityCategory
 from datetime import timedelta, date
 import json
-from categories.views import CategoryHomeView
+
 
 # ホーム画面
 class HomeView(LoginRequiredMixin, generic.TemplateView):
+    #! todo: 本番環境ではtestを削除
     template_name = 'test_home.html'
 
     def get_context_data(self, **kwargs):

@@ -11,9 +11,8 @@
     <h2>累計時間: <span id="total-duration">...</span></h2>
 
     {% block content %}
-    <div id="category-data"></div>
-    </div>
-  {% endblock %}
+        <div id="category-data"></div>
+    {% endblock %}
     {% block extra_js %}
     <script>
         fetch('{{ categories_json_url }}')
@@ -33,7 +32,8 @@
             categoryDataElement.appendChild(categoryList);
           });
       </script>
-  {% endblock %}
+    {% endblock %}
+    
     <canvas id="activityChart"></canvas> <!-- グラフ表示場所 -->
 
     <a href="{% url 'activity:activity_list' %}">レコード画面</a>

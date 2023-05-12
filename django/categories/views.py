@@ -14,50 +14,49 @@ from django.utils import timezone
 import datetime
 from django.db.models import Q
 
-
-# TODO: ホーム画面にカテゴリー毎の累計活動時間の表示
-    #* activity:HomeView内でimportする必要あり
-    #* カテゴリーが削除済み(is_deleted = Ture)の場合は表示しない
-
+# Categoryの情報をJSON形式で返すView
 class CategoryHomeView(generic.View):
     def get(self, request, *args, **kwargs):
+        # ユーザーが作成したカテゴリーの一覧を取得
         categories = Category.objects.filter(user=request.user, is_deleted=False).annotate(
-            total_duration=Sum('activitycategory__activity_record__duration')
+            total_duration=Sum('activitycategory__activity_record__duration')  # カテゴリーの総時間を計算
         ).exclude(Q(activitycategory__activity_record__duration=None) | Q(total_duration=None))
+
+        # カテゴリーの情報を辞書型で保存
         categories_data = [
             {
-                'id': category.id,
-                'name': category.name,
-                'total_duration': minutes_to_hours(category.total_duration),
-                'color_code': category.color_code,
+                'id': category.id,  # カテゴリーのidを保存
+                'name': category.name,  # カテゴリーの名前を保存
+                'total_duration': minutes_to_hours(category.total_duration),  # カテゴリーの総時間を計算して保存
+                'color_code': category.color_code,  # カテゴリーの色情報を保存
             }
             for category in categories
         ]
-        return JsonResponse(categories_data, safe=False)
+        return JsonResponse(categories_data, safe=False)  # カテゴリー情報をJSON形式で返す
 
 def minutes_to_hours(minutes):
     hours = minutes // 60
     minutes = minutes % 60
     return f"{hours}:{minutes:02d}"
 
-class CategoryListView(generic.ListView):
+# カテゴリーの一覧を表示するView
+class CategoryListAjaxView(generic.ListView):
     model = Category
     context_object_name = 'categories'
 
     def get_queryset(self):
         qs = super().get_queryset()
         qs = qs.filter(user=self.request.user, is_deleted=False)
-        qs = qs.annotate(total_duration=Sum('activitycategory__activity_record__duration'))
+        qs = qs.annotate(total_duration=Sum('activitycategory__activity_record__duration'))  # カテゴリーの総時間を計算
         qs = qs.exclude(Q(activitycategory__activity_record__duration=None) | Q(total_duration=None))
         return qs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         for category in context['categories']:
-            category.total_duration = minutes_to_hours(category.total_duration)
-            category.color_code = category.color_code
+            category.total_duration = minutes_to_hours(category.total_duration)  # カテゴリーの総時間を計算して保存
+            category.color_code = category.color_code  # カテゴリーの色情報を保存
         return context
-
 
 
 # TODO: カテゴリー毎のhome画面
