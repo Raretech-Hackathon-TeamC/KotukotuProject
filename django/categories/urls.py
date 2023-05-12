@@ -12,5 +12,5 @@ urlpatterns = [
     path('check_duplicate_edit/', views.check_duplicate_edit, name='check_duplicate_edit'),
     path('<int:pk>/delete/', views.CategoryDeleteView.as_view(), name='category_delete'),
     path('<int:pk>/', views.CategoryDetailView.as_view(), name='category_detail'),
-    path('categories_json/', views.CategoryHomeView.as_view(), name='categories_json')
+    path('categories_json/', views.CategoryHomeAjaxView.as_view(), name='categories_json')
 ]
