@@ -14,8 +14,8 @@ import json
 
 # ホーム画面
 class HomeView(LoginRequiredMixin, generic.TemplateView):
-    #! todo: 本番環境ではtestを削除
-    template_name = 'test_home.html'
+    #! todo: 動作確認時にtestを追加
+    template_name = 'home.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -81,7 +81,7 @@ class ActivityAddView(LoginRequiredMixin, generic.CreateView):
     # モデル・フォーム・テンプレート・リダイレクト先の設定
     model = ActivityRecord
     form_class = ActivityRecordForm
-    #! todo: 本番環境ではtestを削除
+    #! todo: 動作確認時にtestを追加
     template_name = 'activity_add.html'
     success_url = reverse_lazy('activity:home')
 
@@ -138,7 +138,7 @@ def get_total_days(request):
 # レコード画面(積み上げ一覧)
 class ActivityListView(LoginRequiredMixin, generic.View):
     def get(self, request, *args, **kwargs):
-        #! todo: 本番環境ではtestを削除
+        #! todo: 動作確認時にtestを追加
         return render(request, 'activity_list.html')
 
 # レコード画面にJson型のデータを送信する(非同期通信)
@@ -189,8 +189,8 @@ class ActivityListAjaxView(LoginRequiredMixin, generic.View):
 class ActivityEditView(LoginRequiredMixin, generic.UpdateView):
     model = ActivityRecord
     form_class = ActivityRecordForm
-    #! todo: 本番環境ではtestを削除
-    template_name = 'test_activity_edit.html'
+    #! todo: 動作確認時にtestを追加
+    template_name = 'activity_edit.html'
     success_url = reverse_lazy('activity:activity_list')
 
     def get_form_kwargs(self):
