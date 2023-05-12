@@ -7,7 +7,7 @@
     <title>CategoryHome</title>
 </head>
 <body>
-    <div>
+    {% comment %} <div>
         <h2>{{ category.name }}</h2>
         <p>累計時間: {{ total_duration }} minutes</p>
       </div>
@@ -32,8 +32,36 @@
             </tr>
           {% endfor %}
         </tbody>
-      </table>
+      </table> {% endcomment %}
 
+      <h1>{{ categoryname }}</h1>
+    <canvas id="myChart"></canvas>
+
+    <script>
+        var ctx = document.getElementById('myChart').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: {{ dates|safe }},
+                datasets: [{
+                    label: '累計時間',
+                    data: {{ total_durations|safe }},
+                    backgroundColor: {{ color_code|safe }},
+                    borderColor: {{ color_code|safe }},
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                }
+            }
+        });
+    </script>
 
     {% comment %} <canvas id="activityChart"></canvas> <!-- グラフ表示場所 --> {% endcomment %}
 
