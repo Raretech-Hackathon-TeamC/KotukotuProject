@@ -4,18 +4,17 @@ from django.urls import reverse_lazy, reverse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Count, Prefetch
 from django.http import JsonResponse
-from django.core import serializers
 from .models import ActivityRecord
 from .forms import ActivityRecordForm
 from categories.models import Category, ActivityCategory
 from datetime import timedelta, date
-import json
+from collections import defaultdict
 
 
 # ホーム画面
 class HomeView(LoginRequiredMixin, generic.TemplateView):
     #! todo: 動作確認時にtestを追加
-    template_name = 'home.html'
+    template_name = 'test_home.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -25,22 +24,22 @@ class HomeView(LoginRequiredMixin, generic.TemplateView):
 # TODO: カテゴリー機能別色分け機能の追加
 # ホーム画面へJson型のデータを送信する(非同期通信)
 class HomeAjaxView(LoginRequiredMixin, generic.View):
+    # getメソッドの場合
     def get(self, request, *args, **kwargs):
-        # 過去すべてのレコードを取得する
         end_date = date.min
+        # 全ての記録を取得
         records = ActivityRecord.objects.filter(user=self.request.user, date__gte=end_date)
 
-        # 日付ごとのレコードのリストを取得する
-        records_by_date = {}
+        # Step 1: 日付ごと、カテゴリーごとのレコードリストを取得
+        records_by_date_and_category = defaultdict(lambda: defaultdict(list))
         for record in records:
             date_str = record.date.strftime('%-m/%-d')
-            if date_str not in records_by_date:
-                records_by_date[date_str] = []
-            records_by_date[date_str].append(record)
+            categories = ActivityCategory.objects.filter(activityrecord=record)
+            for category in categories:
+                records_by_date_and_category[date_str][category.category].append(record)
 
-        # 日付のリストを作成する
+        # Step 2: 日付のリストとカテゴリー毎のdurationリストを作成
         date_list = []
-        # 日付から7日前までの日付を取得する
         current_date = date.today()
         for i in range(7):
             date_str = current_date.strftime('%-m/%-d')
@@ -48,30 +47,43 @@ class HomeAjaxView(LoginRequiredMixin, generic.View):
             current_date -= timedelta(days=1)
         date_list.reverse()
 
-        # 日付ごとのdurationを合計したリストを作成する
+        category_duration_lists = defaultdict(list)
+        for date_str in date_list:
+            for category in Category.objects.all():
+                if category in records_by_date_and_category[date_str]:
+                    duration_sum = sum([record.duration for record in records_by_date_and_category[date_str][category]])
+                    category_duration_lists[category].append(duration_sum)
+                else:
+                    category_duration_lists[category].append(0)
+
+        # Step 3: 未分類のdurationリストを作成
         duration_list = []
         for date_str in date_list:
-            if date_str in records_by_date:
-                duration_sum = sum([record.duration for record in records_by_date[date_str]])
+            if date_str in records_by_date_and_category:
+                duration_sum = sum([record.duration for record in records_by_date_and_category[date_str]])
                 duration_list.append(duration_sum)
             else:
                 duration_list.append(0)
+        uncategorized_duration_list = duration_list.copy()
+        for category, category_duration_list in category_duration_lists.items():
+            uncategorized_duration_list = [total - category for total, category in zip(uncategorized_duration_list, category_duration_list)]
 
-        # 日付の重複を除いた日数を計算する
-        total_days = len(set(records_by_date.keys()))
+        # Step 4: カテゴリー毎の色情報を取得
+        category_colors = {category: category.color_code for category in category_duration_lists.keys()}
 
-        # 全レコードのdurationを合計する
+        # 全レコードのdurationを合計
         total_duration = sum([record.duration for record in records])
+        # 日付の重複を除いた日数を計算
+        total_days = len(set(records_by_date_and_category.keys()))
 
-        # duration_listから各durationを'時間.分'の形式に変換する
-        duration_list = [f"{duration // 60 + duration % 60 / 60:.1f}" for duration in duration_list]
-
-        # JSON形式でデータを返す
+        # Step 5: JSONレスポンスの作成
         response_data = {
             'date_list': date_list,
-            'duration_list': duration_list,
+            'category_duration_lists': {str(category): [f"{duration // 60 + duration % 60 / 60:.1f}" for duration in duration_list] for category, duration_list in category_duration_lists.items()},
+            'uncategorized_duration_list': [f"{duration // 60 + duration % 60 / 60:.1f}" for duration in uncategorized_duration_list],
             'total_days': total_days,
-            'total_duration': f"{total_duration // 60}:{total_duration % 60}"
+            'total_duration': f"{total_duration // 60}:{total_duration % 60}",
+            'category_colors': category_colors,
         }
         return JsonResponse(response_data)
 
