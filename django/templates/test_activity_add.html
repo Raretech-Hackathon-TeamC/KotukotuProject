@@ -7,71 +7,113 @@
 </head>
 <body>
     <h1>Test Activity Add</h1>
-    <form id="activityRecordForm" method="post" onsubmit="event.preventDefault(); submitForm();">
+    <form id="activityRecordForm" method="post" class="activityRecordForm" onsubmit="event.preventDefault(); submitForm();">
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit">保存</button>
+        <a href="{% url 'activity:home' %}">キャンセル</a>
     </form>
 
-    <div id="successMessage" style="display: none;">
+    {# モーダル #}
+    <div id="successModal" style="display: none;">
         <h5>Good job!</h5>
         <p id="totalDays">活動累計日数: 0</p>
+        <button id="homeButton">ホームへ</button>
+        <button id="recordButton">レコードへ</button>
     </div>
 
+    {# エラー文 #}
     <div id="errorMessages" style="display: none;">
         <ul id="errorMessageList">
         </ul>
     </div>
 
     <script>
-        async function submitForm() {
-            const formData = new FormData(document.querySelector('#activityRecordForm'));
+    // submitFormという名前の関数を作ります。
+    // この関数はフォームを送信するときに動きます。
+    async function submitForm() {
+        // フォームの中の入力したデータを集めます。
+        const formData = new FormData(document.querySelector('.activityRecordForm'));
 
-            const timeInput = document.querySelector('input[type="time"]');
-            const [hours, minutes] = timeInput.value.split(':').map(Number);
-            const durationInMinutes = hours * 60 + minutes;
+        // フォームの中から時間を入力する部分を見つけます。
+        const timeInput = document.querySelector('input[type="time"]');
+        // 入力した時間（例えば "2:30"）を、「時間」と「分」に分けます（この場合は 2と30）。
+        const [hours, minutes] = timeInput.value.split(':').map(Number);
+        // 「時間」を「分」に変えて、それに「分」を足します（この場合は 2時間は120分なので、120分 + 30分 = 150分）。
+        const durationInMinutes = hours * 60 + minutes;
 
-            formData.set('duration', durationInMinutes);
+        // 入力したデータに、「duration」という名前で、計算した「分」を追加します。
+        formData.set('duration', durationInMinutes);
 
-            const response = await fetch('{% url "activity:activity_ajax_submit" %}', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-                },
-            });
+        // 入力したデータをインターネットを通じてサーバーに送ります。
+        const response = await fetch('{% url "activity:activity_add" %}', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                // サーバーに送るための特別なコードを追加します。これは安全を確保するためのものです。
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+            },
+        });
 
-            const data = await response.json();
+        // サーバーからの返事をデータとして読み込みます。
+        const data = await response.json();
 
-            if (data.success) {
-                const totalDaysResponse = await fetch('{% url "activity:get_total_days" %}');
-                const totalDaysData = await totalDaysResponse.json();
+        // サーバーからの返事が成功（データが正しく保存された）だったら
+        if (data.success) {
+            // 累計の活動日数をサーバーから取得します。
+            const totalDaysResponse = await fetch('{% url "activity:get_total_days" %}');
+            const totalDaysData = await totalDaysResponse.json();
 
-                if (totalDaysResponse.ok) {
-                    document.getElementById('totalDays').textContent = '活動累計日数: ' + totalDaysData.total_days;
-                    document.getElementById('successMessage').style.display = 'block';
-                } else {
-                    console.error(data.error);
-                }
+            // 累計日数の取得が成功したら
+            if (totalDaysResponse.ok) {
+                // 累計日数を画面に表示します。
+                document.getElementById('totalDays').textContent = '活動累計日数: ' + totalDaysData.total_days;
+                // 成功のメッセージを表示します。
+                document.getElementById('successModal').style.display = 'block';
             } else {
-                displayErrors(data.errors);
+                // エラーがあったら、それを記録します。
+                console.error(data.error);
+            }
+        } else {
+            // サーバーからの返事が失敗（データが間違っていた）だったら、エラーメッセージを表示します。
+            displayErrors(data.errors);
+        }
+    }
+    // displayErrorsという名前の関数を作ります。
+    // この関数はエラーメッセージを表示するときに動きます。
+    function displayErrors(errors) {
+        // エラーメッセージを表示する場所を見つけます。
+        const errorMessageList = document.getElementById('errorMessageList');
+        // 今表示されているエラーメッセージを全て消します。
+        errorMessageList.innerHTML = '';
+
+        // 受け取ったエラー一覧を一つずつ見ていきます。
+        for (const key in errors) {
+            // JavaScriptの特殊な規則で、エラーの詳細を取り出します。
+            if (Object.prototype.hasOwnProperty.call(errors, key)) {
+                // 新しいリストの項目を作り、その中にエラーの詳細を書きます。
+                const li = document.createElement('li');
+                li.textContent = errors[key];
+                // その項目をエラーメッセージのリストに追加します。
+                errorMessageList.appendChild(li);
             }
         }
 
-        function displayErrors(errors) {
-            const errorMessageList = document.getElementById('errorMessageList');
-            errorMessageList.innerHTML = '';
+        // エラーメッセージを表示します。
+        document.getElementById('errorMessages').style.display = 'block';
+    }
 
-            for (const key in errors) {
-                if (Object.prototype.hasOwnProperty.call(errors, key)) {
-                    const li = document.createElement('li');
-                    li.textContent = errors[key];
-                    errorMessageList.appendChild(li);
-                }
-            }
+    // ホームボタンがクリックされたときの動きを設定します。
+    document.getElementById('homeButton').addEventListener('click', function() {
+        // ホームのページに移動します。
+        location.href = '{% url "activity:home" %}';
+    });
 
-            document.getElementById('errorMessages').style.display = 'block';
-        }
-    </script>
+    // レコードボタンがクリックされたときの動きを設定します。
+    document.getElementById('recordButton').addEventListener('click', function() {
+        // レコードのページに移動します。
+        location.href = '{% url "activity:activity_list" %}';
+    });
+</script>
 </body>
 </html>

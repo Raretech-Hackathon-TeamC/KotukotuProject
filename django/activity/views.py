@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from django.views import generic
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Count
+from django.db.models import Count, Prefetch
 from django.http import JsonResponse
 from django.core import serializers
 from .models import ActivityRecord
@@ -11,11 +11,16 @@ from categories.models import Category, ActivityCategory
 from datetime import timedelta, date
 import json
 
+
 # ホーム画面
-class HomeView(LoginRequiredMixin, generic.View):
-    def get(self, request, *args, **kwargs):
-        #! todo: 本番環境ではtestを削除
-        return render(request, 'home.html')
+class HomeView(LoginRequiredMixin, generic.TemplateView):
+    #! todo: 本番環境ではtestを削除
+    template_name = 'test_home.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['categories_json_url'] = reverse('categories:categories_json')
+        return context
 
 # TODO: カテゴリー機能別色分け機能の追加
 # ホーム画面へJson型のデータを送信する(非同期通信)
@@ -136,37 +141,83 @@ class ActivityListView(LoginRequiredMixin, generic.View):
         #! todo: 本番環境ではtestを削除
         return render(request, 'activity_list.html')
 
-
-# TODO: カテゴリー変更機能の追加
-# レコード画面へjson形式でデータを送信(非同期通信)
+# レコード画面にJson型のデータを送信する(非同期通信)
 class ActivityListAjaxView(LoginRequiredMixin, generic.View):
-    # GETリクエストを処理
+    # getリクエストの処理
     def get(self, request, *args, **kwargs):
-        # ログインユーザーの最新14件の活動を取得
-        activities = ActivityRecord.objects.filter(user=request.user).order_by('-date')[:14]
+        # ユーザーのアクティビティレコードを取得
+        activities = ActivityRecord.objects.filter(user=request.user)
 
-        # 取得した活動をJSON文字列に変換
-        data = serializers.serialize('json', activities, fields=('date', 'duration', 'memo'))
+        # アクティビティに紐づくカテゴリーを一括で取得 (N+1問題の解消)
+        # prefetch_relatedを使って、ActivityCategoryとCategoryを一度に取得
+        activities = activities.prefetch_related(
+            Prefetch(
+                'activitycategory_set',
+                queryset=ActivityCategory.objects.select_related('category'),
+                to_attr='fetched_categories'
+            )
+        )
 
-        # JSON文字列をPythonの辞書リストに変換
-        data = json.loads(data)
+        # 各アクティビティのデータを格納するためのリストを作成
+        activities_data = []
 
-        # 辞書リストをJSON形式でレスポンスとして返す
-        return JsonResponse(data, safe=False)
+        # 各アクティビティレコードについて処理を行う
+        for activity in activities:
+            # fetched_categories属性の存在チェック
+            # fetched_categories属性が存在する場合、その属性からカテゴリー名を取得
+            # 存在しない場合、カテゴリーを空文字列とする
+            if hasattr(activity, 'fetched_categories'):
+                activity_categories = [activity_category.category for activity_category in activity.fetched_categories]
+                category_color = ', '.join([category.color_code for category in activity_categories])
+            else:
+                category_color = ''
 
+            # 各アクティビティのデータをリストに追加
+            activities_data.append({
+                'id': activity.pk,
+                'date': activity.date.strftime('%Y-%m-%d'),
+                'duration': round(activity.duration / 60, 1),
+                'memo': activity.memo,
+                'category_color': category_color,
+            })
 
+        # JSON形式でレスポンスを返す
+        return JsonResponse({'activities': activities_data})
 
 
 # 積み上げ編集画面
-# TODO: カテゴリー変更機能の追加
 class ActivityEditView(LoginRequiredMixin, generic.UpdateView):
     model = ActivityRecord
     form_class = ActivityRecordForm
-    template_name = 'activity_edit.html'
+    #! todo: 本番環境ではtestを削除
+    template_name = 'test_activity_edit.html'
     success_url = reverse_lazy('activity:activity_list')
 
-    def get_queryset(self):
-        return super().get_queryset().filter(user=self.request.user)
+    def get_form_kwargs(self):
+        kwargs = super(ActivityEditView, self).get_form_kwargs()
+        kwargs.update({'user': self.request.user})
+        return kwargs
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.method == 'POST':
+            return self.ajax_submit(request)
+        return super(ActivityEditView, self).dispatch(request, *args, **kwargs)
+
+    def ajax_submit(self, request):
+        instance = ActivityRecord.objects.get(pk=self.kwargs['pk'])
+        form = self.form_class(request.POST, instance=instance, user=request.user)
+
+        if form.is_valid():
+            activity = form.save()
+            category = form.cleaned_data['category']
+
+            if category:
+                ActivityCategory.objects.update_or_create(category=category, activity_record=activity)
+
+            return JsonResponse({"success": True})
+        else:
+            return JsonResponse({"success": False, "errors": form.errors})
+
 
 # 積み上げ削除画面
 class ActivityDeleteView(LoginRequiredMixin, generic.DeleteView):
