@@ -12,16 +12,34 @@ from activity.models import ActivityRecord
 from django.db.models import Sum
 from django.utils import timezone
 import datetime
+from django.db.models import Q
 
 
 # TODO: ホーム画面にカテゴリー毎の累計活動時間の表示
     #* activity:HomeView内でimportする必要あり
     #* カテゴリーが削除済み(is_deleted = Ture)の場合は表示しない
+def minutes_to_hours(minutes):
+    hours = minutes // 60
+    minutes = minutes % 60
+    return f"{hours}:{minutes:02d}"
+
 class CategoryListView(generic.ListView):
     model = Category
-    def get_queryset(self):
-        return Category.objects.filter(user=self.request.user)
+    context_object_name = 'categories'
 
+    def get_queryset(self):
+        qs = super().get_queryset()
+        qs = qs.filter(user=self.request.user, is_deleted=False)
+        qs = qs.annotate(total_duration=Sum('activitycategory__activity_record__duration'))
+        qs = qs.exclude(Q(activitycategory__activity_record__duration=None) | Q(total_duration=None))
+        return qs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        for category in context['categories']:
+            category.total_duration = minutes_to_hours(category.total_duration)
+            category.color_code = category.color_code
+        return context
 
 # TODO: カテゴリー毎のhome画面
     #* カテゴリー毎の累計時間・累計日数の表示
@@ -55,7 +73,8 @@ class CategoryDetailView(LoginRequiredMixin, generic.ListView):
 class CategoryAddView(LoginRequiredMixin, generic.CreateView):
     model = Category
     form_class = CategoryForm
-    template_name = 'category_add.html'
+    #! todo: 本番環境ではtestを削除
+    template_name = 'test_category_add.html'
     success_url = reverse_lazy('activity:home')
 
     def form_valid(self, form):
@@ -86,19 +105,12 @@ def category_restore(request, pk):
     category.save()
     return HttpResponseRedirect(reverse_lazy('activity:home'))
 
-
-# カテゴリー復元
-def category_restore(request, pk):
-    category = Category.objects.get(pk=pk, user=request.user)
-    category.is_deleted = False
-    category.save()
-    return HttpResponseRedirect(reverse_lazy('activity:home'))
-
 # カテゴリー編集
 class CategoryEditView(LoginRequiredMixin, generic.UpdateView):
     model = Category
     form_class = CategoryForm
-    template_name = 'category_edit.html'
+    #!　本番環境ではtestを削除
+    template_name = 'test_category_edit.html'
     success_url = reverse_lazy('activity:home')
 
     def form_valid(self, form):

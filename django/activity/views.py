@@ -16,8 +16,9 @@ from categories.views import CategoryListView
 class HomeView(LoginRequiredMixin, generic.View):
     def get(self, request, *args, **kwargs):
         request.user = self.request.user
-        category_list = CategoryListView.as_view()(request).context_data['object_list']
+        category_list = CategoryListView.as_view()(request).context_data['categories']
         context = {'category_list': category_list}
+        #! todo: 本番環境ではtestを削除
         return render(request, 'test_home.html', context)
 
 # TODO: カテゴリー機能別色分け機能の追加
@@ -158,18 +159,39 @@ class ActivityListAjaxView(LoginRequiredMixin, generic.View):
         return JsonResponse(data, safe=False)
 
 
-
-
 # 積み上げ編集画面
-# TODO: カテゴリー変更機能の追加
 class ActivityEditView(LoginRequiredMixin, generic.UpdateView):
     model = ActivityRecord
     form_class = ActivityRecordForm
-    template_name = 'activity_edit.html'
+    #! todo: 本番環境ではtestを削除
+    template_name = 'test_activity_edit.html'
     success_url = reverse_lazy('activity:activity_list')
 
-    def get_queryset(self):
-        return super().get_queryset().filter(user=self.request.user)
+    def get_form_kwargs(self):
+        kwargs = super(ActivityEditView, self).get_form_kwargs()
+        kwargs.update({'user': self.request.user})
+        return kwargs
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.method == 'POST':
+            return self.ajax_submit(request)
+        return super(ActivityEditView, self).dispatch(request, *args, **kwargs)
+
+    def ajax_submit(self, request):
+        instance = ActivityRecord.objects.get(pk=self.kwargs['pk'])
+        form = self.form_class(request.POST, instance=instance, user=request.user)
+
+        if form.is_valid():
+            activity = form.save()
+            category = form.cleaned_data['category']
+
+            if category:
+                ActivityCategory.objects.update_or_create(category=category, activity_record=activity)
+
+            return JsonResponse({"success": True})
+        else:
+            return JsonResponse({"success": False, "errors": form.errors})
+
 
 # 積み上げ削除画面
 class ActivityDeleteView(LoginRequiredMixin, generic.DeleteView):

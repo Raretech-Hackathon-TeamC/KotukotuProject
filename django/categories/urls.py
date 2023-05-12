@@ -5,7 +5,6 @@ app_name = 'categories'
 
 #TODO
 urlpatterns = [
-    path('home/', views.CategoryListView.as_view(), name='category_home'),
     path('add/', views.CategoryAddView.as_view(), name='category_add'),
     path('check_duplicate_add/', views.check_duplicate_add, name='check_duplicate_add'),
     path('restore/<int:pk>/', views.category_restore, name='category_restore'),

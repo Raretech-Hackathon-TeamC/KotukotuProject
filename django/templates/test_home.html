@@ -11,11 +11,20 @@
     <h2>累計時間: <span id="total-duration">...</span></h2>
 
     {% comment %} 各カテゴリーへの画面遷移 {% endcomment %}
-    {% for category in category_list %}
-        <a href="{% url 'categories:category_detail' pk=category.pk %}">{{ category.name }}</a>
-    {% endfor %}
+    <h1>Categories</h1>
+    <ul>
+        {% for category in category_list %}
+            <li>
+                <a href="{% url 'categories:category_detail' pk=category.pk %}">{{ category.name }} {{ category.total_duration }} {{ category.color_code }}</a>
+            </li>
+        {% endfor %}
+    </ul>
 
     <canvas id="activityChart"></canvas> <!-- グラフ表示場所 -->
+
+    <a href="{% url 'activity:activity_list' %}">レコード画面</a>
+    <a href="{% url 'activity:activity_add'%}">積み上げを記録する</a>
+    <a href="{% url 'categories:category_add'%}">カテゴリーを作成する</a>
 
     <script>
         // 非同期通信でデータを取得
