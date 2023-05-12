@@ -5,16 +5,68 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 import json
-from .models import Category
+from .models import Category, ActivityCategory
 from .forms import CategoryForm
+from datetime import timedelta, date
+from activity.models import ActivityRecord
+from django.db.models import Sum
+from django.utils import timezone
+import datetime
+from django.db.models import Q
 
-# TODO: ホーム画面にカテゴリー毎の累計活動時間の表示
-    #* activity:HomeView内でimportする必要あり
-    #* カテゴリーが削除済み(is_deleted = Ture)の場合は表示しない
+# Categoryの情報をJSON形式で返すView
+class CategoryHomeAjaxView(generic.View):
+    def get(self, request, *args, **kwargs):
+        # ユーザーが作成したカテゴリーの一覧を取得
+        categories = Category.objects.filter(user=request.user, is_deleted=False).annotate(
+            total_duration=Sum('activitycategory__activity_record__duration')  # カテゴリーの総時間を計算
+        ).exclude(Q(activitycategory__activity_record__duration=None) | Q(total_duration=None))
+
+        # カテゴリーの情報を辞書型で保存
+        categories_data = [
+            {
+                'id': category.id,  # カテゴリーのidを保存
+                'name': category.name,  # カテゴリーの名前を保存
+                'total_duration': minutes_to_hours(category.total_duration),  # カテゴリーの総時間を計算して保存
+                'color_code': category.color_code,  # カテゴリーの色情報を保存
+            }
+            for category in categories
+        ]
+        return JsonResponse(categories_data, safe=False)  # カテゴリー情報をJSON形式で返す
+
+def minutes_to_hours(minutes):
+    hours = minutes // 60
+    minutes = minutes % 60
+    return f"{hours}:{minutes:02d}"
+
 
 # TODO: カテゴリー毎のhome画面
     #* カテゴリー毎の累計時間・累計日数の表示
     #* グラフの表示に必要なjson型データの送信
+class CategoryDetailView(LoginRequiredMixin, generic.ListView):
+    model = ActivityCategory
+    template_name = 'category_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        category = get_object_or_404(Category, pk=self.kwargs['pk'], user=self.request.user)
+
+        # 7日前の日付を取得
+        start_date = date.today() - timedelta(days=6)
+
+        # 日付範囲に基づいて、アクティビティレコードをフィルタリング
+        activity_records = ActivityRecord.objects.filter(
+            activitycategory__category=category,
+            date__gte=start_date
+        )
+
+        total_duration = activity_records.aggregate(Sum('duration'))['duration__sum'] or 0
+
+        context['category'] = category
+        context['activity_records'] = activity_records
+        context['total_duration'] = total_duration
+        return context
+
 
 # カテゴリー作成機能
 class CategoryAddView(LoginRequiredMixin, generic.CreateView):
