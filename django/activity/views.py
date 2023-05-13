@@ -72,10 +72,10 @@ class HomeAjaxView(LoginRequiredMixin, generic.View):
                     # そのカテゴリーの記録の合計持続時間（duration）を計算
                     duration_sum = sum([record.duration for record in records_by_date_and_category[date_str][category]])
                     # 合計持続時間をそのカテゴリーのdurationリストに追加
-                    category_duration_lists[category].append(duration_sum)
+                    category_duration_lists[str(category)].append(duration_sum)
                 else:
                     # もし特定のカテゴリーが特定の日付の記録に存在しない場合、その日のカテゴリーの持続時間（duration）は0としてリストに追加
-                    category_duration_lists[category].append(0)
+                    category_duration_lists[str(category)].append(0)
 
         # Step 3: 未分類のdurationリストを作成
         # 日付ごとの持続時間（duration）のリストを作成
@@ -100,7 +100,7 @@ class HomeAjaxView(LoginRequiredMixin, generic.View):
 
         # Step 4: カテゴリー毎の色情報を取得
         # 各カテゴリーの色情報を辞書として取得
-        category_colors = {category: category.color_code for category in category_duration_lists.keys()}
+        category_colors = {str(category): category.color_code for category in Category.objects.all()}
 
         # 全記録の持続時間（duration）を合計
         total_duration = sum([record.duration for record in records])
@@ -113,7 +113,8 @@ class HomeAjaxView(LoginRequiredMixin, generic.View):
         data = {
             'date_list': date_list,
             # 'category_duration_lists' では、各カテゴリー（文字列形式）とそのリストの持続時間（時間形式に変換）のマッピングを作成します。
-            'category_duration_lists': {str(category): [f"{duration // 60 + duration % 60 / 60:.1f}" for duration in duration_list] for category, duration_list in category_duration_lists.items()},
+            'category_duration_lists': {str(category): [f"{duration // 60 + duration % 60 / 60:.1f}" for duration in category_duration_list] for category, category_duration_list in category_duration_lists.items()},
+
 
             # 'uncategorized_duration_list' は未分類のdurationリストを作成し、持続時間を時間形式に変換します。
             'uncategorized_duration_list': [f"{duration // 60 + duration % 60 / 60:.1f}" for duration in uncategorized_duration_list],
