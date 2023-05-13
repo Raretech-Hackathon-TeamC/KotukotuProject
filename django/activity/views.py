@@ -27,97 +27,66 @@ class HomeView(LoginRequiredMixin, generic.TemplateView):
 class HomeAjaxView(LoginRequiredMixin, generic.View):
     # getメソッドの場合
     def get(self, request, *args, **kwargs):
-        # Pythonのdate.minを使用して日付の最小値をend_dateとして設定
-        end_date = date.min
+        # 7日前のend_dateとして設定
+        end_date = date.today() - timedelta(days=7)
 
         # request.userを使用して現在のユーザーに紐づくアクティビティ記録を取得
         # date__gte=end_dateは、日付がend_dateよりも大きいまたは等しい記録のみを取得するフィルター
-        records = ActivityRecord.objects.filter(user=self.request.user, date__gte=end_date)
+        # prefetchを用いてactivityに関連するカテゴリーを先に全て取得
+        activity_categories = ActivityCategory.objects.all()
+        records = ActivityRecord.objects.filter(user=self.request.user, date__gte=end_date).prefetch_related(Prefetch('activitycategory_set', queryset=activity_categories))
 
-        # Step 1: 日付ごと、カテゴリーごとのレコードリストを取得
-        # defaultdictを使用して、日付とカテゴリーをキーとしたネストした辞書を作成
-        records_by_date_and_category = defaultdict(lambda: defaultdict(list))
+        # 全てのカテゴリーを取得
+        all_categories = Category.objects.all()
 
-        # 取得した記録すべてに対してループ
+        # Step 1: 日付のリストとカテゴリー毎のdurationリストを作成
+        # 現在の日付から過去7日間の日付を取得し、そのリストを作成
+        date_list = [(date.today() - timedelta(days=i)).strftime('%-m/%-d') for i in range(7)][::-1]
+
+        # defaultdictを使用してカテゴリー毎のdurationリストを作成するための辞書を作成
+        category_duration_lists = defaultdict(lambda: [0]*7)
+
+        # Step 2: レコードに対するループを実行し、カテゴリー別のdurationリストを作成
         for record in records:
             # 記録の日付を文字列（'%-m/%-d'形式）に変換し、date_strとして保存
             date_str = record.date.strftime('%-m/%-d')
 
             # 当該記録に関連付けられたカテゴリーを取得
-            categories = ActivityCategory.objects.filter(activity_record=record)
+            categories = [activity_category.category for activity_category in record.activitycategory_set.all()]
+            categories = categories or ["未分類"]
 
-            # 各カテゴリーに対してループを実行し、日付とカテゴリーをキーとして、それぞれのカテゴリーに属する記録を辞書に追加
-            for category in categories:
-                records_by_date_and_category[date_str][category.category].append(record)
+            # もしdate_strがdate_listに含まれているなら、そのカテゴリーのdurationを追加
+            if date_str in date_list:
+                index = date_list.index(date_str)
+                for category in categories:
+                    category_duration_lists[str(category)][index] += record.duration
 
-        # Step 2: 日付のリストとカテゴリー毎のdurationリストを作成
-        # 現在の日付から過去7日間の日付を取得し、そのリストを作成
-        date_list = []
-        current_date = date.today()
-        for i in range(7):
-            date_str = current_date.strftime('%-m/%-d')
-            date_list.append(date_str)
-            current_date -= timedelta(days=1)
-        date_list.reverse()
-
-        # defaultdictを使用してカテゴリー毎のdurationリストを作成するための辞書を作成
-        category_duration_lists = defaultdict(list)
-
-        # 取得した日付リストのすべての日付に対してループ
-        for date_str in date_list:
-            # 全てのカテゴリーに対してループ
-            for category in Category.objects.all():
-                # もし特定のカテゴリーが特定の日付の記録に存在する場合
-                if category in records_by_date_and_category[date_str]:
-                    # そのカテゴリーの記録の合計持続時間（duration）を計算
-                    duration_sum = sum([record.duration for record in records_by_date_and_category[date_str][category]])
-                    # 合計持続時間をそのカテゴリーのdurationリストに追加
-                    category_duration_lists[str(category)].append(duration_sum)
-                else:
-                    # もし特定のカテゴリーが特定の日付の記録に存在しない場合、その日のカテゴリーの持続時間（duration）は0としてリストに追加
-                    category_duration_lists[str(category)].append(0)
-
-        # Step 3: 未分類のdurationリストを作成
-        # 日付ごとの持続時間（duration）のリストを作成
-        duration_list = []
-        for date_str in date_list:
-            # もし特定の日付の記録が存在する場合
-            if date_str in records_by_date_and_category:
-                # その日の全記録の合計持続時間（duration）を計算
-                duration_sum = sum([record.duration for category in records_by_date_and_category[date_str].values() for record in category])
-
-                # 合計持続時間をリストに追加
-                duration_list.append(duration_sum)
-            else:
-                # もし特定の日付の記録が存在しない場合、その日の持続時間（duration）は0としてリストに追加
-                duration_list.append(0)
-
-        # 未分類のdurationリストを作成
-        uncategorized_duration_list = duration_list.copy()
-        for category, category_duration_list in category_duration_lists.items():
-            # 未分類のdurationは、全体のdurationから各カテゴリーのdurationを引いたもの
-            uncategorized_duration_list = [total - category for total, category in zip(uncategorized_duration_list, category_duration_list)]
-
-        # Step 4: カテゴリー毎の色情報を取得
+        # Step 3: カテゴリー毎の色情報を取得
         # 各カテゴリーの色情報を辞書として取得
-        category_colors = {str(category): category.color_code for category in Category.objects.all()}
+        category_colors = {str(category): category.color_code for category in all_categories}
+
+        # 未分類の色を設定
+        uncategorized_color = "#808080"
+
+        # 'category_colors' に未分類の色情報を追加
+        category_colors["未分類"] = uncategorized_color
+
+        # 'category_duration_lists' に未分類のdurationリストを追加
+        if "未分類" not in category_duration_lists:
+            category_duration_lists["未分類"] = [0]*7
 
         # 全記録の持続時間（duration）を合計
         total_duration = sum([record.duration for record in records])
 
         # 日付の重複を除いた日数を計算
-        total_days = len(set(records_by_date_and_category.keys()))
+        total_days = len(set(record.date for record in records))
 
-        # Step 5: JSONレスポンスの作成
+        # Step 4: JSONレスポンスの作成
         # 必要なデータを辞書としてまとめる
         data = {
             'date_list': date_list,
             # 'category_duration_lists' では、各カテゴリー（文字列形式）とそのリストの持続時間（時間形式に変換）のマッピングを作成します。
             'category_duration_lists': {str(category): [f"{duration // 60 + duration % 60 / 60:.1f}" for duration in category_duration_list] for category, category_duration_list in category_duration_lists.items()},
-
-
-            # 'uncategorized_duration_list' は未分類のdurationリストを作成し、持続時間を時間形式に変換します。
-            'uncategorized_duration_list': [f"{duration // 60 + duration % 60 / 60:.1f}" for duration in uncategorized_duration_list],
 
             # 'total_days' は記録が存在する日数を表します。
             'total_days': total_days,
@@ -130,6 +99,7 @@ class HomeAjaxView(LoginRequiredMixin, generic.View):
         }
         # JsonResponseで上記で作成した辞書をJSON形式のHTTPレスポンスとして返します。
         return JsonResponse(data)
+
 
 
 
