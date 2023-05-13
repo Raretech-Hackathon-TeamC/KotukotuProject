@@ -4,6 +4,10 @@
 bg-snow text-textBlack font-NotoSans
 {% endblock body_class %}
 
+{% block title %}
+<title>アクティビティリスト</title>
+{% endblock %}
+
 {% comment %} レコードに当てはめるためのcss {% endcomment %}
 {% block extra_styles %}
 <style>
@@ -63,122 +67,33 @@ bg-snow text-textBlack font-NotoSans
 </style>
 {% endblock %}
 
-
 {% load time_filters %} {# ここでtime_filtersをロードします #}
 
 {% load static %}
 
-
-
-
 {% block content %}
 
+ 
+ {% comment %} APIエンドポイントをジャバスクリプトで使用するため {% endcomment %}
+ <script>
+  const apiUrl = "{% url 'activity:activity_list' %}";
+</script>
+  <script src="{% static 'admin/js/activity_list.js' %}"></script>
 
-<!-- ナビゲーションバーを作成 lgは1024pxからのサイズ-->
-<header class="bg-blackGreen w-full fixed top-0 left-0 h-10 lg:h-20 z-10">
-  <div class="container mx-auto px-4 h-full">
-   <nav class="flex items-center justify-between h-full">
-    <div class="flex items-center">
-     <a href="{% url 'activity:home' %}" class="transform hover:scale-105 transition duration-300">
-      <img
-       src="{% static 'admin/img/kotukotu_thumbnail.png' %}"
-       alt="サムネイルのカメの画像"
-       class="h-10 lg:h-20 w-auto py-1 object-cover rounded-xl"
-      />
-     </a>
-    </div>
-    <div class="flex items-center">
-     <ul class="hidden md:flex space-x-8 text-white">
-      <li>
-        <a href="{% url 'activity:home' %}" class="hover:underline">ホーム</a>
-      </li>
-      <li>
-       <a href="{% url 'activity:activity_list' %}" class="hover:underline">レコード</a>
-      </li>
-      <li>
-       <a href="{% url 'activity:activity_add' %}" class="hover:underline">入力</a>
-      </li>
-      <li>
-       <a href="{% url 'categories:category_add' %}" class="hover:underline">カテゴリー</a>
-      </li>
-     </ul>
-     <button
-      type="submit"
-      class="bg-white text-blackGreen px-4 py-1 rounded-full ml-4 hidden md:block"
-      onclick="window.location.href='{% url 'users:logout' %}'"
-     >
-      ログアウト
-     </button>
-     <!-- ハンバーガーメニューアイコン（横幅760px以下で表示） -->
-     <button class="md:hidden text-white focus:outline-none" aria-label="メニュー">
-      <!-- 画像を埋め込む -->
-      <img
-       src="{% static 'admin/img/hamburgur.png' %}"
-       alt="ハンバーガーメニュー"
-       class="hamburger-menu md:hidden"
-       style="height: 40px; width: auto; object-fit: contain; float: left"
-      />
-     </button>
-    </div>
-   </nav>
-  </div>
- </header>
-
-
- <!-- モバイルメニュー（横幅760px以下でハンバーガーメニューを押したら表示） -->
- <div
-  id="mobileMenu"
-  class="hidden fixed top-0 right-0 w-1/2 h-full z-20 bg-blackGreen bg-opacity-80 md:hidden"
- >
-  <!-- 閉じるボタン -->
-  <img
-   id="closeMenuButton"
-   src="{% static 'admin/img/close_button.png' %}"
-   alt="閉じるボタン"
-   class="absolute top-11 right-2 h-6 w-auto cursor-pointer z-30"
-  />
-
-  <!-- メニューのコンテンツが含まれるコンテナ -->
-  <div class="container mx-auto px-4 h-full flex flex-col justify-center items-center z-30">
-   <!-- メニューのリスト -->
-   <ul class="text-white text-center space-y-4">
-    <li>
-     <a href="{% url 'activity:home' %}" class="hover:underline">ホーム</a>
-    </li>
-    <li>
-     <a href="{% url 'activity:activity_list' %}" class="hover:underline">レコード</a>
-    </li>
-    <li>
-     <a href="{% url 'activity:activity_add' %}" class="hover:underline">入力画面</a>
-    </li>
-    <li>
-     <a href="{% url 'categories:category_add' %}" class="hover:underline">カテゴリー</a>
-    </li>
-    <li>
-     <button type="submit" class="bg-white text-blackGreen px-4 py-1 rounded-full mt-4"
-     onclick="window.location.href='{% url 'users:logout' %}'"
-     >
-      ログアウト
-     </button>
-    </li>
-   </ul>
-  </div>
- </div>
-
-
+  
  <!-- 左上のホーム＞のやつを作成 -->
  <div class="container mx-auto px-4 pt-20 text-textBlack">
   <nav class="text-lg">
    <a href="{% url 'activity:home' %}" class="hover:underline text-#474747">ホーム</a>
    <span> &gt; </span>
-   <span>レコード</span>
+   <span>アクティビティリスト</span>
   </nav>
  </div>
 
 
 <!-- タイトルの作成 -->
 <h1 class="container mx-auto px-4 pt-4 text-center bg-snow text-xl md:text-3xl text-textBlack">
-  レコード
+  アクティビティ一覧
  </h1>
  <hr class="mx-10 my-4 border-2 border-blackGreen shadow-md" />
 
@@ -289,16 +204,5 @@ bg-snow text-textBlack font-NotoSans
     deleteModal.style.display = 'none';  // モーダルウィンドウの非表示
   });
   </script> 
-
-
-
-  
- {% comment %} APIエンドポイントをジャバスクリプトで使用するため {% endcomment %}
- <script>
-  const apiUrl = "{% url 'activity:activity_list' %}";
-</script>
-  <script src="{% static 'admin/js/activity_list.js' %}"></script>
-  <script src="{% static 'admin/js/home.js' %}"></script>
-
 
 {% endblock content%}
