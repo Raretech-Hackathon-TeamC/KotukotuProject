@@ -45,9 +45,6 @@ class CategoryDetailView(LoginRequiredMixin, generic.DetailView):
     template_name = 'category_detail.html'
     context_object_name = 'category'
 
-    def get_object(self, queryset=None):
-        return super().get_object(queryset=queryset)
-
 
 # カテゴリー毎の詳細画面へJson型のデータを送信する(非同期通信)
 class CategoryDetailAjaxView(generic.DetailView):
@@ -82,7 +79,6 @@ class CategoryDetailAjaxView(generic.DetailView):
         category_data['duration_list'] = duration_list
 
         # カテゴリーの累計時間を計算
-        total_duration = activities.aggregate(total_duration=Sum('duration'))['total_duration']
         total_duration_datetime = datetime(1, 1, 1) + timedelta(minutes=total_duration)
         category_data['category_total_duration'] = total_duration_datetime.strftime('%H:%M')
 
