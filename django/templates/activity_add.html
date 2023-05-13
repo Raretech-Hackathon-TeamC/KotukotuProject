@@ -12,8 +12,6 @@ bg-snow text-textBlack font-NotoSans
 
 {% block content %}
 
-<script src="{% static 'admin/js/activity_add.js' %}"></script>
-
  <!-- 左上のホーム＞のやつを作成 -->
  <div class="container mx-auto px-4 pt-20 text-textBlack">
   <nav class="text-lg">
@@ -31,6 +29,7 @@ bg-snow text-textBlack font-NotoSans
  <hr class="mx-10 my-4 border-2 border-blackGreen shadow-md" />
 
 
+ {% comment %} まだ連携できてない {% endcomment %}
 <!-- 入力フォーム3つを囲むのコンテナ。小さくなった時の文字の消失はまた後日訂正 -->
 <div class="container mx-auto px-4 py-10">
   <form id="activityRecordForm" method="post" class="grid grid-cols-1 gap-6 max-w-screen-xl mx-auto activityRecordForm" onsubmit="event.preventDefault(); submitForm();">
@@ -127,7 +126,7 @@ bg-snow text-textBlack font-NotoSans
   </div>
 
 
-{% comment %}
+{% comment %}バックエンドが書いた文
 <script>
 // フォームを送信する非同期関数
 async function submitForm() {
@@ -209,5 +208,7 @@ async function submitForm() {
   });
 </script>
 {% endcomment %}
+
+<script src="{% static 'admin/js/activity_add.js' %}"></script>
 
 {% endblock content %}

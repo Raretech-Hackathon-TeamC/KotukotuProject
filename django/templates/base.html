@@ -78,9 +78,6 @@
  {% comment %} body classの継承のやり方。 {% endcomment %}
  <body class="{% block body_class %}default-class{% endblock body_class %}">
 
-  {% comment %} モーダルのjs（home.js）は共通で読み込む {% endcomment %}
-  <script src="{% static 'admin/js/home.js' %}"></script>
-
   {% comment %} ヘッダーメニュー、モバイルメニューを継承 {% endcomment %}
   <!-- ナビゲーションバーを作成 lgは1024pxからのサイズ-->
 <header class="bg-blackGreen w-full fixed top-0 left-0 h-10 lg:h-20 z-10">
@@ -173,6 +170,10 @@
    </ul>
   </div>
  </div>
+
+ {% comment %} モーダルのjs（home.js）は共通で読み込む {% endcomment %}
+ <script src="{% static 'admin/js/home.js' %}"></script>
+
  
   {% block content %} {% endblock content %}
  </body>
