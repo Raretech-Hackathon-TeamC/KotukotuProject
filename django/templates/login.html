@@ -1,71 +1,92 @@
-{% extends 'base.html' %}
-
-{% block body_class %}
-bg-blackGreen text-textBlack font-NotoSans min-h-screen flex flex-col items-center justify-center space-y-4
-{% endblock body_class %}
-
 {% load static %}
+<!DOCTYPE html>
+<html lang="ja">
+ <head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-{% block content %}
+  {# 現在はCDNで使っている #}
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <title>ログイン</title>
+
+  {# フォント設定。 #}
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+   href="https://fonts.googleapis.com/css2?family=Noto+Emoji&family=Noto+Sans+JP:wght@100;200;300;400;500;600;700&display=swap"
+   rel="stylesheet"
+  />
+ </head>
+
+ <body
+  class="bg-[#8AA7A1] text-[#474747] font-NotoSans min-h-screen flex flex-col items-center justify-center space-y-4"
+ >
   <!-- 画像のコンテナ。親要素でトリミングを指定している（overflow-hidden）。小要素でサイズ変更。object-coverで比率変えずに -->
   <div class="rounded-lg">
-    <img
-      src="{% static 'admin/img/kotukotu_thumbnail.png' %}"
-      alt="サムネイルのカメの画像"
-      class="w-25 h-20 object-cover rounded-tl-2xl rounded-tr-2xl rounded-bl-2xl rounded-br-2xl"
-    />
+   <img
+    src="{% static 'admin/img/kotukotu_thumbnail.png' %}"
+    alt="サムネイルのカメの画像"
+    class="w-25 h-20 object-cover rounded-tl-2xl rounded-tr-2xl rounded-bl-2xl rounded-br-2xl"
+   />
   </div>
 
   <!-- ログインフォームのコンテナ白い部分 -->
   <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-    <form method="POST">
-        {% csrf_token %} 
+   <form method="POST">
+    {% csrf_token %}
 
     <!-- エラーメッセージの表示。-->
-    {% if form.is_bound %}
-    {% if form.username.errors or form.password.errors %}
-      <div class="text-red-500 mb-4">メールアドレスまたはパスワードが正しくありません。</div>
-    {% endif %}
-  {% endif %}
-  
-
+    {% if form.is_bound %} {% if form.username.errors or form.password.errors %}
+    <div class="text-red-500 mb-4">メールアドレスまたはパスワードが正しくありません。</div>
+    {% endif %} {% endif %}
 
     <!-- メールアドレスの入力フィールド -->
-<div class="mb-4">
-    <label for="{{ form.username.id_for_label }}" class="block text-gray-700 font-semibold">
+    <div class="mb-4">
+     <label for="{{ form.username.id_for_label }}" class="block text-gray-700 font-semibold">
       メールアドレス
-    </label>
-    <input type="text" name="{{ form.username.html_name }}" id="{{ form.username.auto_id }}" class="mt-1 w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500" value="{{ form.username.value|default:'' }}" />
-  </div>
-  
-  <!-- パスワードの入力フィールド -->
-  <div class="mb-6">
-    <label for="{{ form.password.id_for_label }}" class="block text-gray-700 font-semibold">
+     </label>
+     <input
+      type="text"
+      name="{{ form.username.html_name }}"
+      id="{{ form.username.auto_id }}"
+      class="mt-1 w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500"
+      value="{{ form.username.value|default:'' }}"
+     />
+    </div>
+
+    <!-- パスワードの入力フィールド -->
+    <div class="mb-6">
+     <label for="{{ form.password.id_for_label }}" class="block text-gray-700 font-semibold">
       パスワード
-    </label>
-    <input type="password" name="{{ form.password.html_name }}" id="{{ form.password.auto_id }}" class="mt-1 w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500" value="{{ form.password.value|default:'' }}" />
-  </div>
-  
+     </label>
+     <input
+      type="password"
+      name="{{ form.password.html_name }}"
+      id="{{ form.password.auto_id }}"
+      class="mt-1 w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500"
+      value="{{ form.password.value|default:'' }}"
+     />
+    </div>
 
     <!-- ログインボタン -->
     <button
-    type="submit"
-    class="w-full py-3 mt-4 text-white btn-blackGreen rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-custom hover:bg-whiteGreen"
->
-ログイン
-</button>
-
-    </form>  
-
+     type="submit"
+     class="w-full py-3 mt-4 text-white bg-[#8AA7A1] hover:bg-[#adc7c2] rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-custom"
+    >
+     ログイン
+    </button>
+   </form>
   </div>
 
-<!-- サインアップへのリンク -->
-<div class="mt-4">
-    <a href="{% url 'users:register' %}" class="text-custom underline hover:text-snow">
-      新しくアカウントを作成する
-    </a>
-</div>
+  <!-- サインアップへのリンク -->
+  <div class="mt-4">
+   <a href="{% url 'users:register' %}" class="text-custom underline hover:text-[#f2f2f2]">
+    新しくアカウントを作成する
+   </a>
+  </div>
 
-<input type="hidden" name="next" value="{{ next }}" />
-
-{% endblock content %}
+  <input type="hidden" name="next" value="{{ next }}" />
+ </body>
+</html>
