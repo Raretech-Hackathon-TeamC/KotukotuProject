@@ -7,11 +7,9 @@ from django.shortcuts import get_object_or_404
 import json
 from .models import Category, ActivityCategory
 from .forms import CategoryForm
-from datetime import timedelta, date
+from datetime import timedelta, datetime
 from activity.models import ActivityRecord
 from django.db.models import Sum
-from django.utils import timezone
-import datetime
 from django.db.models import Q
 
 # Categoryの情報をJSON形式で返すView
@@ -40,70 +38,54 @@ def minutes_to_hours(minutes):
     return f"{hours}:{minutes:02d}"
 
 
-# TODO: カテゴリー毎のhome画面
-    #* カテゴリー毎の累計時間・累計日数の表示
-    #* グラフの表示に必要なjson型データの送信
-class CategoryDetailView(LoginRequiredMixin, generic.ListView):
-    def get(self, request, *args, **kwargs):
-        #! todo: 本番環境ではtestを削除
-        return render(request, 'category_detail.html')
-    # model = ActivityCategory
-    # template_name = 'category_detail.html'
-
-    # def get_context_data(self, **kwargs):
-    #     context = super().get_context_data(**kwargs)
-    #     category = get_object_or_404(Category, pk=self.kwargs['pk'], user=self.request.user)
-
-    #     # 7日前の日付を取得
-    #     start_date = date.today() - timedelta(days=6)
-
-    #     # 日付範囲に基づいて、アクティビティレコードをフィルタリング
-    #     activity_records = ActivityRecord.objects.filter(
-    #         activitycategory__category=category,
-    #         date__gte=start_date
-    #     )
-
-    #     total_duration = activity_records.aggregate(Sum('duration'))['duration__sum'] or 0
-
-    #     context['category'] = category
-    #     context['activity_records'] = activity_records
-    #     context['total_duration'] = total_duration
-    #     return context
-
-class CategoryDetailAjaxView(LoginRequiredMixin, generic.CreateView):
+# カテゴリー毎の詳細画面
+class CategoryDetailView(LoginRequiredMixin, generic.DetailView):
     model = Category
     template_name = 'category_detail.html'
-    fields = ['name', 'goal', 'color_code']
+    context_object_name = 'category'
+
+    def get_object(self, queryset=None):
+        return super().get_object(queryset=queryset)
+
+
+# カテゴリー毎の詳細画面へJson型のデータを送信する(非同期通信)
+class CategoryDetailAjaxView(generic.DetailView):
+    model = Category
 
     def get(self, request, *args, **kwargs):
-        # カテゴリー情報を取得
-        category = Category.objects.get(pk=self.kwargs['pk'])
-
-        # 表示している日と7日間の日付を計算
-        today = date.today()
-        dates = [today - timedelta(days=i) for i in range(7)]
-
-        # 日付ごとの累計時間を計算
-        total_durations = []
-        for d in dates:
-            duration_sum = ActivityRecord.objects.filter(user=request.user, date=d, activitycategory__category=category).aggregate(Sum('duration'))['duration__sum']
-            if duration_sum is None:
-                duration_sum = 0
-            total_durations.append(duration_sum)
-
-        # カテゴリーの合計時間を計算
-        category_total_duration = sum(total_durations)
-
-        # データをJson形式で作成
-        data = {
+        # カテゴリーの基本情報を取得
+        category = self.get_object()
+        category_data = {
+            'categoryid': category.id,
             'categoryname': category.name,
             'color_code': category.color_code,
-            'category_total_duration': category_total_duration,
-            'dates': [d.strftime('%m/%d') for d in dates],
-            'total_durations': [str(timedelta(minutes=d)) for d in total_durations],
+            'goal': category.goal
         }
 
-        return JsonResponse(data)
+        # 7日前から本日までの日付を取得
+        dates = [(datetime.now() - timedelta(days=i)).date() for i in range(6, -1, -1)]
+        dates_str = [date.strftime('%m/%d') for date in dates]
+        category_data['dates'] = dates_str
+
+        # カテゴリーに紐づくアクティビティの合計時間を取得
+        activities = ActivityRecord.objects.filter(activitycategory__category=category)
+        total_duration = activities.aggregate(total_duration=Sum('duration'))['total_duration']
+        activity_duration_dict = activities.annotate(day=Sum('duration')).values('day', 'date')
+        activity_duration_dict = {activity['date']: activity['day'] for activity in activity_duration_dict}
+
+        # 1日毎の累計時間を計算
+        duration_list = []
+        for date in dates:
+            duration = activity_duration_dict.get(date, 0)
+            duration_list.append(duration)
+        category_data['duration_list'] = duration_list
+
+        # カテゴリーの累計時間を計算
+        total_duration = activities.aggregate(total_duration=Sum('duration'))['total_duration']
+        total_duration_datetime = datetime(1, 1, 1) + timedelta(minutes=total_duration)
+        category_data['category_total_duration'] = total_duration_datetime.strftime('%H:%M')
+
+        return JsonResponse(category_data)
 
 
 # カテゴリー作成機能
