@@ -6,8 +6,8 @@ services:
     build:
       context: ./mysql/
     container_name: MySQL
-    volumes:
-      - ./volumes/data/db:/var/lib/mysql/djangodb
+    # volumes:
+    #  - ./volumes/data/db:/var/lib/mysql/djangodb
     env_file:
       - .env
     # DBのコンテナのヘルスチェックを行う

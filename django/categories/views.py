@@ -41,6 +41,7 @@ def minutes_to_hours(minutes):
 # カテゴリー毎の詳細画面
 class CategoryDetailView(LoginRequiredMixin, generic.DetailView):
     model = Category
+    #! todo: 動作確認時にtestを追加
     template_name = 'category_detail.html'
     context_object_name = 'category'
 
@@ -92,8 +93,8 @@ class CategoryDetailAjaxView(generic.DetailView):
 class CategoryAddView(LoginRequiredMixin, generic.CreateView):
     model = Category
     form_class = CategoryForm
-    #! todo: 本番環境ではtestを削除
-    template_name = 'test_category_add.html'
+    #! todo: 動作確認時にtestを追加
+    template_name = 'category_add.html'
     success_url = reverse_lazy('activity:home')
 
     def form_valid(self, form):
@@ -128,8 +129,8 @@ def category_restore(request, pk):
 class CategoryEditView(LoginRequiredMixin, generic.UpdateView):
     model = Category
     form_class = CategoryForm
-    #!　本番環境ではtestを削除
-    template_name = 'test_category_edit.html'
+    #! todo: 動作確認時にtestを追加
+    template_name = 'category_edit.html'
     success_url = reverse_lazy('activity:home')
 
     def form_valid(self, form):
