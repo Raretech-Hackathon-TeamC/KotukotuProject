@@ -66,7 +66,7 @@ class HomeAjaxView(LoginRequiredMixin, generic.View):
         category_colors = {str(category): category.color_code for category in all_categories}
 
         # 未分類の色を設定
-        uncategorized_color = "#808080"
+        uncategorized_color = "#D9D9D9"
 
         # 'category_colors' に未分類の色情報を追加
         category_colors["未分類"] = uncategorized_color
