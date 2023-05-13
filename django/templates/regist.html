@@ -1,12 +1,28 @@
-{% extends 'base.html' %}
-
-{% block body_class %}
-bg-snow text-textBlack font-NotoSans min-h-screen flex flex-col items-center justify-center space-y-4
-{% endblock body_class %}
-
 {% load static %}
+<!DOCTYPE html>
+<html lang="ja">
+ <head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-{% block content %}
+  {# 現在はCDNで使っている #}
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <title>サインアップ</title>
+
+  {# フォント設定。 #}
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+   href="https://fonts.googleapis.com/css2?family=Noto+Emoji&family=Noto+Sans+JP:wght@100;200;300;400;500;600;700&display=swap"
+   rel="stylesheet"
+  />
+ </head>
+
+ <body
+  class="bg-[#8AA7A1] text-[#474747] font-NotoSans min-h-screen flex flex-col items-center justify-center space-y-4"
+ >
   <!-- 画像のコンテナ -->
   <div class="rounded-lg">
     <img
@@ -21,21 +37,15 @@ bg-snow text-textBlack font-NotoSans min-h-screen flex flex-col items-center jus
     <form id="signup-form" method="post">
       {% csrf_token %}
 
-  <!-- エラーメッセージの表示 -->
-  {% if form.is_bound %}
-    {% if form.username.errors or form.email.errors or form.password1.errors or form.password2.errors %}
-      <div class="text-red-500 mb-4">
-        入力内容に誤りがあります。各項目を確認してください。
-      </div>
-    {% endif %}
-  {% endif %}
-
       <!-- ユーザー名の入力フィールド -->
       <div class="mb-4">
-        <label for="{{ form.username.id_for_label }}" class="block text-gray-700 font-semibold">
+        <label for="{{ form.user_name.id_for_label }}" class="block text-gray-700 font-semibold">
           ユーザー名
         </label>
-        <input type="text" name="{{ form.username.html_name }}" id="{{ form.username.auto_id }}" class="mt-1 w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500" value="{{ form.username.value|default:'' }}" />
+        <input type="text" name="{{ form.user_name.html_name }}" id="{{ form.user_name.auto_id }}" class="mt-1 w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500" value="{{ form.user_name.value|default:'' }}" />
+        {% if form.user_name.errors %}
+          <div class="text-red-500">{{ form.user_name.errors }}</div>
+        {% endif %}
       </div>
 
       <!-- メールアドレスの入力フィールド -->
@@ -44,6 +54,9 @@ bg-snow text-textBlack font-NotoSans min-h-screen flex flex-col items-center jus
           メールアドレス
         </label>
         <input type="email" name="{{ form.email.html_name }}" id="{{ form.email.auto_id }}" class="mt-1 w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500" value="{{ form.email.value|default:'' }}" />
+        {% if form.email.errors %}
+          <div class="text-red-500">{{ form.email.errors }}</div>
+        {% endif %}
       </div>
 
       <!-- パスワードの入力フィールド -->
@@ -52,6 +65,9 @@ bg-snow text-textBlack font-NotoSans min-h-screen flex flex-col items-center jus
           パスワード
         </label>
         <input type="password" name="{{ form.password.html_name }}" id="{{ form.password.auto_id }}" class="mt-1 w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500" value="{{ form.password.value|default:'' }}" />
+        {% if form.password.errors %}
+          <div class="text-red-500">{{ form.password.errors }}</div>
+        {% endif %}
       </div>
 
       <!-- 確認用パスワードの入力フィールド -->
@@ -60,12 +76,15 @@ bg-snow text-textBlack font-NotoSans min-h-screen flex flex-col items-center jus
           確認用パスワード
         </label>
         <input type="password" name="{{ form.confirm_password.html_name }}" id="{{ form.confirm_password.auto_id }}" class="mt-1 w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500" value="{{ form.confirm_password.value|default:'' }}" />
+        {% if form.confirm_password.errors %}
+          <div class="text-red-500">{{ form.confirm_password.errors }}</div>
+        {% endif %}
       </div>
 
       <!-- サインアップボタン -->
       <button
         type="submit"
-        class="w-full py-3 mt-4 text-white btn-blackGreen rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-custom hover:bg-whiteGreen"
+        class="w-full py-3 mt-4 text-white bg-[#8AA7A1] hover:bg-[#adc7c2] rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-custom"
       >
         サインアップ
       </button>
@@ -73,9 +92,9 @@ bg-snow text-textBlack font-NotoSans min-h-screen flex flex-col items-center jus
   </div>
   <!-- ログインページへのリンク -->
   <div class="mt-4">
-    <a href="{% url 'users:login' %}" class="text-custom hover:text-snow underline">
+    <a href="{% url 'users:login' %}" class="text-custom hover:text-[#f2f2f2] underline">
       登録済みの方はこちら
     </a>
   </div>
-{% endblock content %}
-
+ </body>
+</html>
