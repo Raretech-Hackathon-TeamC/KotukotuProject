@@ -14,7 +14,7 @@ from collections import defaultdict
 # ホーム画面
 class HomeView(LoginRequiredMixin, generic.TemplateView):
     #! todo: 動作確認時にtestを追加
-    template_name = 'test_home.html'
+    template_name = 'home.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -27,8 +27,8 @@ class HomeView(LoginRequiredMixin, generic.TemplateView):
 class HomeAjaxView(LoginRequiredMixin, generic.View):
     # getメソッドの場合
     def get(self, request, *args, **kwargs):
-        # 7日前のend_dateとして設定
-        end_date = date.today() - timedelta(days=7)
+        # Pythonのdate.minを使用して日付の最小値をend_dateとして設定
+        end_date = date.min
 
         # request.userを使用して現在のユーザーに紐づくアクティビティ記録を取得
         # date__gte=end_dateは、日付がend_dateよりも大きいまたは等しい記録のみを取得するフィルター
@@ -77,6 +77,9 @@ class HomeAjaxView(LoginRequiredMixin, generic.View):
 
         # 全記録の持続時間（duration）を合計
         total_duration = sum([record.duration for record in records])
+        # 'total_duration' は全ての記録の持続時間を合計し、時間:分の形式に変換します。
+        total_minutes = total_duration % 60
+        total_hours = total_duration // 60
 
         # 日付の重複を除いた日数を計算
         total_days = len(set(record.date for record in records))
@@ -92,7 +95,7 @@ class HomeAjaxView(LoginRequiredMixin, generic.View):
             'total_days': total_days,
 
             # 'total_duration' は全ての記録の持続時間を合計し、時間:分の形式に変換します。
-            'total_duration': f"{total_duration // 60}:{total_duration % 60}",
+            'total_duration': f"{total_hours}.{total_minutes:02d}",
 
             # 'category_colors' は各カテゴリーとその色情報のマッピングを作成します。
             'category_colors': category_colors,
@@ -109,7 +112,7 @@ class ActivityAddView(LoginRequiredMixin, generic.CreateView):
     model = ActivityRecord
     form_class = ActivityRecordForm
     #! todo: 動作確認時にtestを追加
-    template_name = 'test_activity_add.html'
+    template_name = 'activity_add.html'
     success_url = reverse_lazy('activity:home')
 
     # フォームが有効な場合、リクエストユーザーを設定

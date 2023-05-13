@@ -45,6 +45,7 @@
         fetch('/activity/ajax_get_data/')
             .then(response => response.json())
             .then(data => {
+                // データ確認用
                 console.log(data)
                 // 累計日数と累計時間を更新
                 document.getElementById('total-days').textContent = data.total_days;
