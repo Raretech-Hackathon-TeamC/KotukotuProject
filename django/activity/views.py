@@ -104,8 +104,6 @@ class HomeAjaxView(LoginRequiredMixin, generic.View):
         return JsonResponse(data)
 
 
-
-
 # 積み上げ追加画面
 class ActivityAddView(LoginRequiredMixin, generic.CreateView):
     # モデル・フォーム・テンプレート・リダイレクト先の設定
