@@ -84,30 +84,3 @@ async function fetchActivityRecords() {
  // データを返す
  return data;
 }
-
-// 非同期処理を実行し、チャットアイテムをロード
-loadChatItems();
-
-// モーダルの表示を制御する関数
-function showModal() {
- const modalBg = document.getElementById("modal-bg");
- modalBg.classList.remove("hidden");
- modalBg.classList.add("flex");
-}
-
-// DOMが読み込まれた後に実行されるように設定
-document.addEventListener("DOMContentLoaded", function () {
- // 省略: メニューボタン、モバイルメニュー、閉じるボタンの定義とイベントリスナー
-
- // 閉じるボタンがクリックされた時の処理
- closeButton.addEventListener("click", function () {
-  mobileMenu.classList.add("hidden");
- });
-
- // 閉じるボタンをクリックした際のイベントリスナー
- document.getElementById("close-modal").addEventListener("click", function () {
-  const modalBg = document.getElementById("modal-bg");
-  modalBg.classList.remove("flex");
-  modalBg.classList.add("hidden");
- });
-});

@@ -4,120 +4,32 @@
 bg-snow text-textBlack font-NotoSans
 {% endblock body_class %}
 
+{% block title %}
+<title>アクティビティ追加</title>
+{% endblock %}
+
 {% load static %}
+
 {% block content %}
 
-<!-- ナビゲーションバーを作成 lgは1024pxからのサイズ-->
-<header class="bg-blackGreen w-full fixed top-0 left-0 h-10 lg:h-20 z-10">
-  <div class="container mx-auto px-4 h-full">
-   <nav class="flex items-center justify-between h-full">
-    <div class="flex items-center">
-     <a href="{% url 'activity:home' %}" class="transform hover:scale-105 transition duration-300">
-      <img
-       src="{% static 'admin/img/kotukotu_thumbnail.png' %}"
-       alt="サムネイルのカメの画像"
-       class="h-10 lg:h-20 w-auto py-1 object-cover rounded-xl"
-      />
-     </a>
-    </div>
-    <div class="flex items-center">
-     <ul class="hidden md:flex space-x-8 text-white">
-      <li>
-        <a href="{% url 'activity:home' %}" class="hover:underline">ホーム</a>
-      </li>
-      <li>
-       <a href="{% url 'activity:activity_list' %}" class="hover:underline">レコード</a>
-      </li>
-      <li>
-       <a href="{% url 'activity:activity_add' %}" class="hover:underline">入力</a>
-      </li>
-      <li>
-       <a href="{% url 'categories:category_add' %}" class="hover:underline">カテゴリー</a>
-      </li>
-     </ul>
-     <button
-      type="submit"
-      class="bg-white text-blackGreen px-4 py-1 rounded-full ml-4 hidden md:block"
-      onclick="window.location.href='{% url 'users:logout' %}'"
-     >
-      ログアウト
-     </button>
-     <!-- ハンバーガーメニューアイコン（横幅760px以下で表示） -->
-     <button class="md:hidden text-white focus:outline-none" aria-label="メニュー">
-      <!-- 画像を埋め込む -->
-      <img
-       src="{% static 'admin/img/hamburgur.png' %}"
-       alt="ハンバーガーメニュー"
-       class="hamburger-menu md:hidden"
-       style="height: 40px; width: auto; object-fit: contain; float: left"
-      />
-     </button>
-    </div>
-   </nav>
-  </div>
- </header>
-
-
- <!-- モバイルメニュー（横幅760px以下でハンバーガーメニューを押したら表示） -->
- <div
-  id="mobileMenu"
-  class="hidden fixed top-0 right-0 w-1/2 h-full z-20 bg-blackGreen bg-opacity-80 md:hidden"
- >
-  <!-- 閉じるボタン -->
-  <img
-   id="closeMenuButton"
-   src="{% static 'admin/img/close_button.png' %}"
-   alt="閉じるボタン"
-   class="absolute top-11 right-2 h-6 w-auto cursor-pointer z-30"
-  />
-
-  <!-- メニューのコンテンツが含まれるコンテナ -->
-  <div class="container mx-auto px-4 h-full flex flex-col justify-center items-center z-30">
-   <!-- メニューのリスト -->
-   <ul class="text-white text-center space-y-4">
-    <li>
-     <a href="{% url 'activity:home' %}" class="hover:underline">ホーム</a>
-    </li>
-    <li>
-     <a href="{% url 'activity:activity_list' %}" class="hover:underline">レコード</a>
-    </li>
-    <li>
-     <a href="{% url 'activity:activity_add' %}" class="hover:underline">入力画面</a>
-    </li>
-    <li>
-     <a href="{% url 'categories:category_add' %}" class="hover:underline">カテゴリー</a>
-    </li>
-    <li>
-     <button type="submit" class="bg-white text-blackGreen px-4 py-1 rounded-full mt-4"
-     onclick="window.location.href='{% url 'users:logout' %}'"
-     >
-      ログアウト
-     </button>
-    </li>
-   </ul>
-  </div>
- </div>
-
+<script src="{% static 'admin/js/activity_add.js' %}"></script>
 
  <!-- 左上のホーム＞のやつを作成 -->
  <div class="container mx-auto px-4 pt-20 text-textBlack">
   <nav class="text-lg">
    <a href="{% url 'activity:home' %}" class="hover:underline text-#474747">ホーム</a>
    <span> &gt; </span>
-   <span>入力画面</span>
+   <span>アクティビティ追加</span>
   </nav>
  </div>
 
 
 <!-- タイトルの作成 -->
 <h1 class="container mx-auto px-4 pt-4 text-center bg-snow text-xl md:text-3xl text-textBlack">
-  積み上げを入力する
+  アクティビティを追加する
  </h1>
  <hr class="mx-10 my-4 border-2 border-blackGreen shadow-md" />
 
-
-
-{% comment %} 上は共通部分。下が調整必要。 {% endcomment %}
 
 <!-- 入力フォーム3つを囲むのコンテナ。小さくなった時の文字の消失はまた後日訂正 -->
 <div class="container mx-auto px-4 py-10">
@@ -208,34 +120,12 @@ bg-snow text-textBlack font-NotoSans
  </div>
 
 
-{% comment %} ここからが元々あった分。完了したものからコメントアウト {% endcomment %}
-  {% comment %} <h1>積み上げ追加</h1>
-  <form id="activityRecordForm" method="post" class="activityRecordForm" onsubmit="event.preventDefault(); submitForm();">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">保存</button>
-
-
-    <a href="{% url 'activity:activity_list' %}">キャンセル</a>
-    <a href="{% url 'activity:home' %}">ホーム画面</a>
-  </form> {% endcomment %}
-
-  {# Modal #}
-  {% comment %} <div id="successModal" style="display: none;">
-    <h5>Good job!</h5>
-    <p id="totalDays">活動累計日数: 0</p>
-    <button id="homeButton">ホームへ</button>
-    <button id="recordButton">レコードへ</button>
-  </div> {% endcomment %}
-
   {# Error messages #}
   <div id="errorMessages" style="display: none;">
     <ul id="errorMessageList">
     </ul>
   </div>
 
-  <script src="{% static 'admin/js/activity_add.js' %}"></script>
-  <script src="{% static 'admin/js/home.js' %}"></script>
 
 {% comment %}
 <script>

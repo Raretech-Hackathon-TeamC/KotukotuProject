@@ -10,58 +10,15 @@
 bg-snow text-textBlack font-NotoSans
 {% endblock body_class %}
 
+{% block title %}
+<title>ホーム</title>
+{% endblock %}
+
 {% load static %}
 {% block content %}
 
-<!-- ナビゲーションバーを作成 lgは1024pxからのサイズ-->
-<header class="bg-blackGreen w-full fixed top-0 left-0 h-10 lg:h-20 z-10">
-  <div class="container mx-auto px-4 h-full">
-   <nav class="flex items-center justify-between h-full">
-    <div class="flex items-center">
-     <a href="#" class="transform hover:scale-105 transition duration-300">
-      <img
-       src="{% static 'admin/img/kotukotu_thumbnail.png' %}"
-       alt="サムネイルのカメの画像"
-       class="h-10 lg:h-20 w-auto py-1 object-cover rounded-xl"
-      />
-     </a>
-    </div>
-    <div class="flex items-center">
-     <ul class="hidden md:flex space-x-8 text-white">
-      <li>
-       <a href="#" class="hover:underline">ホーム</a>
-      </li>
-      <li>
-       <a href="{% url 'activity:activity_list' %}" class="hover:underline">レコード</a>
-      </li>
-      <li>
-       <a href="{% url 'activity:activity_add' %}" class="hover:underline">記録</a>
-      </li>
-      <li>
-       <a href="{% url 'categories:category_add' %}" class="hover:underline">カテゴリー</a>
-      </li>
-     </ul>
-     <button
-      type="submit"
-      class="bg-white text-blackGreen px-4 py-1 rounded-full ml-4 hidden md:block"
-      onclick="window.location.href='{% url 'users:logout' %}'"
-     >
-      ログアウト
-     </button>
-     <!-- ハンバーガーメニューアイコン（横幅760px以下で表示） -->
-     <button class="md:hidden text-white focus:outline-none" aria-label="メニュー">
-      <!-- 画像を埋め込む -->
-      <img
-       src="{% static 'admin/img/hamburgur.png' %}"
-       alt="ハンバーガーメニュー"
-       class="hamburger-menu md:hidden"
-       style="height: 40px; width: auto; object-fit: contain; float: left"
-      />
-     </button>
-    </div>
-   </nav>
-  </div>
- </header>
+<script src="{% static 'admin/js/categories_list.js' %}"></script>
+<script type="module" src="{% static 'admin/js/graph.js' %}"></script>
 
  <!-- 左上のホーム＞のやつを作成 -->
  <div class="container mx-auto px-4 pt-20 text-textBlack">
@@ -142,54 +99,6 @@ bg-snow text-textBlack font-NotoSans
 </div>
 
 
-
-
- <!-- モバイルメニュー（横幅760px以下でハンバーガーメニューを押したら表示） -->
- <div
-  id="mobileMenu"
-  class="hidden fixed top-0 right-0 w-1/2 h-full z-20 bg-blackGreen bg-opacity-80 md:hidden"
- >
-  <!-- 閉じるボタン -->
-  <img
-   id="closeMenuButton"
-   src="{% static 'admin/img/close_button.png' %}"
-   alt="閉じるボタン"
-   class="absolute top-11 right-2 h-6 w-auto cursor-pointer z-30"
-  />
-
-  <!-- メニューのコンテンツが含まれるコンテナ -->
-  <div class="container mx-auto px-4 h-full flex flex-col justify-center items-center z-30">
-   <!-- メニューのリスト -->
-   <ul class="text-white text-center space-y-4">
-    <li>
-     <a href="#" class="hover:underline">ホーム</a>
-    </li>
-    <li>
-     <a href="{% url 'activity:activity_list' %}" class="hover:underline">レコード</a>
-    </li>
-    <li>
-     <a href="{% url 'activity:activity_add' %}" class="hover:underline">記録</a>
-    </li>
-    <li>
-     <a href="{% url 'categories:category_add' %}" class="hover:underline">カテゴリー</a>
-    </li>
-    <li>
-     <button type="submit" class="bg-white text-blackGreen px-4 py-1 rounded-full mt-4"
-     onclick="window.location.href='{% url 'users:logout' %}'"
-     >
-      ログアウト
-     </button>
-    </li>
-   </ul>
-  </div>
- </div>
-
- <script src="{% static 'admin/js/home.js' %}"></script>
- <script src="{% static 'admin/js/categories_list.js' %}"></script>
- <script type="module" src="{% static 'admin/js/graph.js' %}"></script>
- 
-
-
 {% comment %} 以降は元々作ってくれたもの。 {% endcomment %}
   {% comment %} <h1>ホーム画面です</h1>
   <a href="{% url 'users:logout' %}">ログアウト</a>
@@ -199,7 +108,7 @@ bg-snow text-textBlack font-NotoSans
 
   <h1>日々の積み上げ記録</h1>
   <p>
-    {{ username }}さん今日も頑張りましょう
+    {{ user_name }}さん今日も頑張りましょう
   </p>
   <p>
     累計時間:{{ total_duration }}
