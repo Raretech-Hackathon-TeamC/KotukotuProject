@@ -1,75 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Chart.jsの読み込み -->
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script><!-- Chart.jsの読み込み -->
     <title>CategoryHome</title>
-</head>
-<body>
-    <div>
-        <h2>{{ category.name }}</h2>
-        <p>累計時間: {{ total_duration }} minutes</p>
-      </div>
-      <table>
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Duration</th>
-            <th>Memo</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for activity_record in activity_records %}
-            <tr>
-              <td>{{ activity_record.date }}</td>
-              <td>{{ activity_record.duration }}</td>
-              <td>{{ activity_record.memo }}</td>
-            </tr>
-          {% empty %}
-            <tr>
-              <td colspan="3">No activity records found.</td>
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+  </head>
+  <body>
+    <!-- カテゴリー名や目標、合計時間、7日間の時間などの基本情報 -->
+    <div id="category-info">
+        <h2 id="category-name"></h2>
+        <div id="category-detail"></div>
+    </div>
+    <p>カテゴリーの目標： <span id="category-goal"></span></p>
+    <p>カテゴリーの累計時間： <span id="category-total-duration"></span></p>
+    <ul id="date-list"></ul>
+    <ul id="duration-list"></ul>
 
 
-    {% comment %} <canvas id="activityChart"></canvas> <!-- グラフ表示場所 --> {% endcomment %}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(function() {
+        const categoryId = '{{ category.id }}';
+        const url = `/categories/${categoryId}/category_detail_ajax/`;
+        $.getJSON(url, function(data) {
+            $('#category-name').text(data.categoryname);
+            $('#category-info').css('background-color', data.color_code);
+            $('#category-goal').text(data.goal);
+            $('#category-total-duration').text(data.category_total_duration);
 
-    {% comment %} <script>
-        // 非同期通信でデータを取得
-        fetch('/activity/ajax_get_data/')
-            .then(response => response.json())
-            .then(data => {
-                // 累計日数と累計時間を更新
-                document.getElementById('total-days').textContent = data.total_days;
-                document.getElementById('total-duration').textContent = data.total_duration;
-
-                // グラフを作成
-                new Chart(document.getElementById('activityChart'), {
-                    type: 'bar',
-                    data: {
-                        labels: data.date_list, // X軸ラベルに日付を設定
-                        datasets: [{
-                            label: '活動時間（分）',
-                            data: data.duration_list, // Y軸データに活動時間を設定
-                            backgroundColor: 'rgba(75, 192, 192, 0.2)', // バーの色
-                            borderColor: 'rgba(75, 192, 192, 1)', // バーのボーダーカラー
-                            borderWidth: 1 // バーのボーダー幅
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        scales: {
-                            y: {
-                                beginAtZero: true
-                            }
-                        }
-                    }
-                });
-            })
-            .catch(error => console.error('Error:', error));
-    </script> {% endcomment %}
-</body>
+            const $dateList = $('#date-list');
+            const $durationList = $('#duration-list');
+            data.dates.forEach((date, index) => {
+            $dateList.append(`<li>${date}</li>`);
+            const duration = data.duration_list[index];
+            $durationList.append(`<li>${duration}</li>`);
+            });
+        });
+        });
+    </script>
+    </body>
 </html>
