@@ -73,14 +73,6 @@ bg-snow text-textBlack font-NotoSans
 
 {% block content %}
 
- 
- {% comment %} APIエンドポイントをジャバスクリプトで使用するため {% endcomment %}
- <script>
-  const apiUrl = "{% url 'activity:activity_list' %}";
-</script>
-  <script src="{% static 'admin/js/activity_list.js' %}"></script>
-
-  
  <!-- 左上のホーム＞のやつを作成 -->
  <div class="container mx-auto px-4 pt-20 text-textBlack">
   <nav class="text-lg">
@@ -204,5 +196,12 @@ bg-snow text-textBlack font-NotoSans
     deleteModal.style.display = 'none';  // モーダルウィンドウの非表示
   });
   </script> 
+
+  {% comment %} APIエンドポイントをジャバスクリプトで使用するため {% endcomment %}
+ <script>
+  const apiUrl = "{% url 'activity:activity_list' %}";
+</script>
+  <script src="{% static 'admin/js/activity_list.js' %}"></script>
+
 
 {% endblock content%}

@@ -17,9 +17,6 @@ bg-snow text-textBlack font-NotoSans
 {% load static %}
 {% block content %}
 
-<script src="{% static 'admin/js/categories_list.js' %}"></script>
-<script type="module" src="{% static 'admin/js/graph.js' %}"></script>
-
  <!-- 左上のホーム＞のやつを作成 -->
  <div class="container mx-auto px-4 pt-20 text-textBlack">
   <nav class="text-lg">
@@ -106,7 +103,7 @@ bg-snow text-textBlack font-NotoSans
   <a href="{% url 'activity:activity_list' %}">レコード画面へ</a>
   <a href="{% url 'activity:activity_add' %}">積み上げを記録する</a> {% endcomment %}
 
-  <h1>日々の積み上げ記録</h1>
+  {% comment %} <h1>日々の積み上げ記録</h1>
   <p>
     {{ user_name }}さん今日も頑張りましょう
   </p>
@@ -129,6 +126,11 @@ bg-snow text-textBlack font-NotoSans
     {% endfor %}
   </ul>
 
-  <a href="{% url 'categories:category_add' %}">カテゴリーを作成する</a>
+  <a href="{% url 'categories:category_add' %}">カテゴリーを作成する</a> {% endcomment %}
+
+  <script src="{% static 'admin/js/categories_list.js' %}"></script>
+<script src="{% static 'admin/js/graph.js' %}"></script>
+<script type="module" src="{% static 'admin/js/graph.js' %}"></script>
+
 
 {% endblock content %}

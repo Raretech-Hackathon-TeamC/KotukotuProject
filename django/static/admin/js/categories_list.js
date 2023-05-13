@@ -27,8 +27,7 @@ categories.forEach(category => {
  // 新しいdiv要素を作成
  const categoryElement = document.createElement("div");
  // 作成したdiv要素にCSSクラスを設定
- categoryElement.className =
-  "bg-[COLOR] text-textBlack rounded-lg p-4 w-64 h-12 flex justify-between items-center mb-4";
+ categoryElement.className = `bg-${category.categoryColor} text-textBlack rounded-lg p-4 w-64 h-12 flex justify-between items-center mb-4`;
  // 作成したdiv要素の背景色を設定
  categoryElement.style.backgroundColor = category.categoryColor;
 
@@ -51,13 +50,16 @@ categories.forEach(category => {
  categoryElement.appendChild(categoryDuration);
 
  // categoryList要素に作成したdiv要素を追加
- categoryList.appendChild(categoryElement);
+ if (categoryList) {
+  categoryList.appendChild(categoryElement);
+ }
 
  // 768px以下の画面幅用に要素を複製
- const categoryElementMobile = categoryElement.cloneNode(true);
- // 作成したdiv要素にCSSクラスを設定
- categoryElementMobile.className =
-  "bg-[COLOR] text-textBlack rounded-lg p-2 mx-auto w-full h-12 flex justify-between items-center mb-4 mx-8";
- // categoryListMobile要素に作成したdiv要素
- categoryListMobile.appendChild(categoryElementMobile);
+ if (categoryListMobile) {
+  const categoryElementMobile = categoryElement.cloneNode(true);
+  // 作成したdiv要素にCSSクラスを設定
+  categoryElementMobile.className = `bg-${category.categoryColor} text-textBlack rounded-lg p-2 mx-auto w-full h-12 flex justify-between items-center mb-4 mx-8`;
+  // categoryListMobile要素に作成したdiv要素
+  categoryListMobile.appendChild(categoryElementMobile);
+ }
 });
