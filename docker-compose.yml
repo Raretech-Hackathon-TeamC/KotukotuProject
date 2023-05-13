@@ -43,7 +43,7 @@ services:
       context: ./nginx/
     volumes:
       - tmp-data:/app/tmp
-      - ./nginx/static:/app/static
+    # - ./nginx/static:/app/static
       - static_volume:/app/static
     ports:
       - "80:80"
