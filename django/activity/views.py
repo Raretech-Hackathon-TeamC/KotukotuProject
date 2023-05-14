@@ -4,12 +4,11 @@ from django.urls import reverse_lazy, reverse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Count, Prefetch
 from django.http import JsonResponse
-from django.core import serializers
 from .models import ActivityRecord
 from .forms import ActivityRecordForm
 from categories.models import Category, ActivityCategory
 from datetime import timedelta, date
-import json
+from collections import defaultdict
 
 
 # ホーム画面
@@ -23,57 +22,86 @@ class HomeView(LoginRequiredMixin, generic.TemplateView):
         return context
 
 # TODO: カテゴリー機能別色分け機能の追加
+
 # ホーム画面へJson型のデータを送信する(非同期通信)
 class HomeAjaxView(LoginRequiredMixin, generic.View):
+    # getメソッドの場合
     def get(self, request, *args, **kwargs):
-        # 過去すべてのレコードを取得する
+        # Pythonのdate.minを使用して日付の最小値をend_dateとして設定
         end_date = date.min
-        records = ActivityRecord.objects.filter(user=self.request.user, date__gte=end_date)
 
-        # 日付ごとのレコードのリストを取得する
-        records_by_date = {}
+        # request.userを使用して現在のユーザーに紐づくアクティビティ記録を取得
+        # date__gte=end_dateは、日付がend_dateよりも大きいまたは等しい記録のみを取得するフィルター
+        # prefetchを用いてactivityに関連するカテゴリーを先に全て取得
+        activity_categories = ActivityCategory.objects.all()
+        records = ActivityRecord.objects.filter(user=self.request.user, date__gte=end_date).prefetch_related(Prefetch('activitycategory_set', queryset=activity_categories))
+
+        # 全てのカテゴリーを取得
+        all_categories = Category.objects.all()
+
+        # Step 1: 日付のリストとカテゴリー毎のdurationリストを作成
+        # 現在の日付から過去7日間の日付を取得し、そのリストを作成
+        date_list = [(date.today() - timedelta(days=i)).strftime('%-m/%-d') for i in range(7)][::-1]
+
+        # defaultdictを使用してカテゴリー毎のdurationリストを作成するための辞書を作成
+        category_duration_lists = defaultdict(lambda: [0]*7)
+
+        # Step 2: レコードに対するループを実行し、カテゴリー別のdurationリストを作成
         for record in records:
+            # 記録の日付を文字列（'%-m/%-d'形式）に変換し、date_strとして保存
             date_str = record.date.strftime('%-m/%-d')
-            if date_str not in records_by_date:
-                records_by_date[date_str] = []
-            records_by_date[date_str].append(record)
 
-        # 日付のリストを作成する
-        date_list = []
-        # 日付から7日前までの日付を取得する
-        current_date = date.today()
-        for i in range(7):
-            date_str = current_date.strftime('%-m/%-d')
-            date_list.append(date_str)
-            current_date -= timedelta(days=1)
-        date_list.reverse()
+            # 当該記録に関連付けられたカテゴリーを取得
+            categories = [activity_category.category for activity_category in record.activitycategory_set.all()]
+            categories = categories or ["未分類"]
 
-        # 日付ごとのdurationを合計したリストを作成する
-        duration_list = []
-        for date_str in date_list:
-            if date_str in records_by_date:
-                duration_sum = sum([record.duration for record in records_by_date[date_str]])
-                duration_list.append(duration_sum)
-            else:
-                duration_list.append(0)
+            # もしdate_strがdate_listに含まれているなら、そのカテゴリーのdurationを追加
+            if date_str in date_list:
+                index = date_list.index(date_str)
+                for category in categories:
+                    category_duration_lists[str(category)][index] += record.duration
 
-        # 日付の重複を除いた日数を計算する
-        total_days = len(set(records_by_date.keys()))
+        # Step 3: カテゴリー毎の色情報を取得
+        # 各カテゴリーの色情報を辞書として取得
+        category_colors = {str(category): category.color_code for category in all_categories}
 
-        # 全レコードのdurationを合計する
+        # 未分類の色を設定
+        uncategorized_color = "#D9D9D9"
+
+        # 'category_colors' に未分類の色情報を追加
+        category_colors["未分類"] = uncategorized_color
+
+        # 'category_duration_lists' に未分類のdurationリストを追加
+        if "未分類" not in category_duration_lists:
+            category_duration_lists["未分類"] = [0]*7
+
+        # 全記録の持続時間（duration）を合計
         total_duration = sum([record.duration for record in records])
+        # 'total_duration' は全ての記録の持続時間を合計し、時間:分の形式に変換します。
+        total_minutes = total_duration % 60
+        total_hours = total_duration // 60
 
-        # duration_listから各durationを'時間.分'の形式に変換する
-        duration_list = [f"{duration // 60 + duration % 60 / 60:.1f}" for duration in duration_list]
+        # 日付の重複を除いた日数を計算
+        total_days = len(set(record.date for record in records))
 
-        # JSON形式でデータを返す
-        response_data = {
+        # Step 4: JSONレスポンスの作成
+        # 必要なデータを辞書としてまとめる
+        data = {
             'date_list': date_list,
-            'duration_list': duration_list,
+            # 'category_duration_lists' では、各カテゴリー（文字列形式）とそのリストの持続時間（時間形式に変換）のマッピングを作成します。
+            'category_duration_lists': {str(category): [f"{duration // 60 + duration % 60 / 60:.1f}" for duration in category_duration_list] for category, category_duration_list in category_duration_lists.items()},
+
+            # 'total_days' は記録が存在する日数を表します。
             'total_days': total_days,
-            'total_duration': f"{total_duration // 60}:{total_duration % 60}"
+
+            # 'total_duration' は全ての記録の持続時間を合計し、時間:分の形式に変換します。
+            'total_duration': f"{total_hours}.{total_minutes:02d}",
+
+            # 'category_colors' は各カテゴリーとその色情報のマッピングを作成します。
+            'category_colors': category_colors,
         }
-        return JsonResponse(response_data)
+        # JsonResponseで上記で作成した辞書をJSON形式のHTTPレスポンスとして返します。
+        return JsonResponse(data)
 
 
 # 積み上げ追加画面

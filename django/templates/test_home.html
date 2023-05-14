@@ -33,7 +33,7 @@
           });
       </script>
     {% endblock %}
-    
+
     <canvas id="activityChart"></canvas> <!-- グラフ表示場所 -->
 
     <a href="{% url 'activity:activity_list' %}">レコード画面</a>
@@ -45,28 +45,41 @@
         fetch('/activity/ajax_get_data/')
             .then(response => response.json())
             .then(data => {
+                // データ確認用
+                console.log(data)
                 // 累計日数と累計時間を更新
                 document.getElementById('total-days').textContent = data.total_days;
                 document.getElementById('total-duration').textContent = data.total_duration;
+
+                // 各カテゴリーごとにデータセットを作成
+                const datasets = [];
+                for (const [category, duration_list] of Object.entries(data.category_duration_lists)) {
+                    datasets.push({
+                        label: category,
+                        data: duration_list,
+                        backgroundColor: data.category_colors[category], // バ
+                    backgroundColor: data.category_colors[category], // バーの色をカテゴリーの色に設定
+                    borderColor: data.category_colors[category], // バーのボーダーカラーをカテゴリーの色に設定
+                    borderWidth: 1 // バーのボーダー幅
+                });
+                }
 
                 // グラフを作成
                 new Chart(document.getElementById('activityChart'), {
                     type: 'bar',
                     data: {
                         labels: data.date_list, // X軸ラベルに日付を設定
-                        datasets: [{
-                            label: '活動時間（分）',
-                            data: data.duration_list, // Y軸データに活動時間を設定
-                            backgroundColor: 'rgba(75, 192, 192, 0.2)', // バーの色
-                            borderColor: 'rgba(75, 192, 192, 1)', // バーのボーダーカラー
-                            borderWidth: 1 // バーのボーダー幅
-                        }]
+                        datasets: datasets
                     },
                     options: {
                         responsive: true,
                         scales: {
+                            x: {
+                                stacked: true, // X軸を積み上げる
+                            },
                             y: {
-                                beginAtZero: true
+                                beginAtZero: true,
+                                stacked: true, // Y軸を積み上げる
                             }
                         }
                     }
