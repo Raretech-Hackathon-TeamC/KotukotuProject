@@ -29,6 +29,7 @@ services:
     volumes:
       - tmp-data:/app/tmp
       - ./django:/app
+    # - static_volume:/app/staticfiles
     env_file:
       - .env
     # 先にdbを起動してからappを起動する
@@ -42,7 +43,9 @@ services:
       context: ./nginx/
     volumes:
       - tmp-data:/app/tmp
-      - ./nginx/static:/app/static
+    # - ./nginx/static:/app/static
+    # - static_volume:/app/static
+      - ./django/static:/app/static
     ports:
       - "80:80"
     depends_on:
@@ -62,3 +65,4 @@ services:
 
 volumes:
   tmp-data:
+  # static_volume:

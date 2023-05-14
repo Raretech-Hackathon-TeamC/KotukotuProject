@@ -134,7 +134,8 @@ TIME_ZONE = 'Asia/Tokyo'
 # Djangoの管理者画面にHTML、CSS、Javascriptが適用されます
 # STATIC_ROOT = "/static/" ほそまつがコメントアウト。下を追加。
 # STATIC_ROOT = os.path.join(BASE_DIR, "static")ほそまつが下に再度変更5/13。Djangoが全ての静的ファイルを集めてくる場所を指定
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+# 今回はcollectを実施しない（すでに静的ファイルが一箇所にある）ため、以下コメントアウトします。5/13
+#STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 STATIC_URL = "/static/"
 
