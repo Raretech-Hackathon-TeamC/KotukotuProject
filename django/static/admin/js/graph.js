@@ -10,7 +10,7 @@ let barChart;  // barChartをグローバルスコープで宣言
     const data = await response.json();
 
     // データをコンソールにログとして出力します（デバッグ用）
-    console.log(data);
+    // console.log(data);
 
     // HTMLの指定の要素に累計日数と累計時間を表示します
     document.getElementById('totalDays').textContent = data.total_days;
