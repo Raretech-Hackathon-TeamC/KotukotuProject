@@ -95,40 +95,7 @@ bg-snow text-textBlack font-NotoSans
 </div>
 </div>
 
-
-{% comment %} 以降は元々作ってくれたもの。 {% endcomment %}
-  {% comment %} <h1>ホーム画面です</h1>
-  <a href="{% url 'users:logout' %}">ログアウト</a>
-
-  <a href="{% url 'activity:activity_list' %}">レコード画面へ</a>
-  <a href="{% url 'activity:activity_add' %}">積み上げを記録する</a> {% endcomment %}
-
-  {% comment %} <h1>日々の積み上げ記録</h1>
-  <p>
-    {{ user_name }}さん今日も頑張りましょう
-  </p>
-  <p>
-    累計時間:{{ total_duration }}
-  </p>
-  <p>
-    累計日数:{{ total_days }}日
-  </p>
-  <p>日付</p>
-  <ul>
-    {% for date in date_list %}
-      <li>{{ date }}</li>
-    {% endfor %}
-  </ul>
-  <p>時間</p>
-  <ul>
-    {% for duration in duration_list %}
-      <li>{{ duration }}</li>
-    {% endfor %}
-  </ul>
-
-  <a href="{% url 'categories:category_add' %}">カテゴリーを作成する</a> {% endcomment %}
-
-  <script src="{% static 'admin/js/categories_list.js' %}"></script>
+<script src="{% static 'admin/js/categories_list.js' %}"></script>
 <script src="{% static 'admin/js/graph.js' %}"></script>
 <script type="module" src="{% static 'admin/js/graph.js' %}"></script>
 
