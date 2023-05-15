@@ -11,8 +11,6 @@ bg-snow text-textBlack font-NotoSans
 {% load static %}
 
 {% block content %}
-{% comment %} クリップボード保存機能を持たせている。 {% endcomment %}
-<script src="{% static 'admin/js/category_add.js' %}"></script>
 
 <!-- 左上のホーム＞のやつを作成 -->
 <div class="container mx-auto px-4 pt-20 text-textBlack">
@@ -138,5 +136,7 @@ bg-snow text-textBlack font-NotoSans
  });
 </script>
 
+{% comment %} クリップボード保存機能を持たせている。 {% endcomment %}
+<script src="{% static 'admin/js/category_add.js' %}"></script>
 
 {% endblock %}

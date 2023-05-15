@@ -1,49 +1,100 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
+
+{% block body_class %} 
+bg-snow text-textBlack font-NotoSans 
+{% endblock body_class %}
+
+{% block title %}
+<title>カテゴリー編集</title>
+{% endblock %}
+
+{% load static %}
 
 {% block content %}
-  <h2>カテゴリー編集画面</h2>
-  <form id="categoryEditForm" method="POST">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">保存</button>
-    <a href="{% url 'activity:home' %}">戻る</a>
-  </form>
 
-  {# モーダル for existing category #}
+<!-- 左上のホーム＞のやつを作成 -->
+<div class="container mx-auto px-4 pt-20 text-textBlack">
+ <nav class="text-lg">
+  <a href="{% url 'activity:home' %}" class="hover:underline text-#474747">ホーム</a>
+  <span> &gt; </span>
+  <span>カテゴリー追加</span>
+ </nav>
+</div>
+
+<!-- タイトルの作成 -->
+<h1 class="container mx-auto px-4 pt-4 text-center bg-snow text-xl md:text-3xl text-textBlack z-20">
+  カテゴリーを編集する
+ </h1>
+ <hr class="mx-10 my-4 border-2 border-blackGreen shadow-md z-20" />
+ 
+ <div class="container mx-auto px-4 py-10 z-30">
+  <form id="categoryAddForm" method="POST" class="grid grid-cols-1 gap-6 max-w-screen-xl mx-auto activityRecordForm">
+    {% csrf_token %}
+   <!-- カテゴリーネーム作成 -->
+   <div class="mx-auto w-full md:w-3/4 py-2 bg-blackGreen text-textBlack rounded-lg flex items-center justify-center">
+     {{ form.name.label_tag }}
+     {{ form.name }}
+   </div>
+
+   <!-- 目標の作成 -->
+   <div class="mx-auto w-full md:w-3/4 py-2 bg-blackGreen text-textBlack rounded-lg flex items-center justify-center">
+     {{ form.goal.label_tag }}
+     {{ form.goal }}
+   </div>
+
+   <!-- カラーの選択 -->
+   <div class="mx-auto w-full md:w-3/4 py-2 bg-blackGreen text-textBlack rounded-lg flex items-center justify-center">
+     {{ form.color_code.label_tag }}
+     {{ form.color_code }}
+   </div>
+
+
+        <!-- 色の選択。押したらクリップボードにコピーされる -->
+      <div class="flex flex-wrap justify-center space-x-4">
+        <div class="w-16 h-16 md:w-16 md:h-16 bg-[#DAD4B7] rounded text-center line-height[6rem] md:line-height[4rem] cursor-pointer text-base md:text-xs" onclick="copyToClipboard('#DAD4B7')">#DAD4B7</div>
+        <div class="w-16 h-16 md:w-16 md:h-16 bg-[#B7C1DA] rounded text-center line-height[6rem] md:line-height[4rem] cursor-pointer text-base md:text-xs" onclick="copyToClipboard('#B7C1DA')">#B7C1DA</div>
+        <div class="w-16 h-16 md:w-16 md:h-16 bg-[#DABEB7] rounded text-center line-height[6rem] md:line-height[4rem] cursor-pointer text-base md:text-xs" onclick="copyToClipboard('#DABEB7')">#DABEB7</div>
+        <div class="w-16 h-16 md:w-16 md:h-16 bg-[#DAC6B7] rounded text-center line-height[6rem] md:line-height[4rem] cursor-pointer text-base md:text-xs" onclick="copyToClipboard('#DAC6B7')">#DAC6B7</div>
+        <div class="w-16 h-16 md:w-16 md:h-16 bg-[#CFB7DA] rounded text-center line-height[6rem] md:line-height[4rem] cursor-pointer text-base md:text-xs" onclick="copyToClipboard('#CFB7DA')">#CFB7DA</div>
+        <div class="w-16 h-16 md:w-16 md:h-16 bg-[#B7D6DA] rounded text-center line-height[6rem] md:line-height[4rem] cursor-pointer text-base md:text-xs" onclick="copyToClipboard('#B7D6DA')">#B7D6DA</div>
+        <div class="w-16 h-16 md:w-16 md:h-16 bg-[#C6DAB7] rounded text-center line-height[6rem] md:line-height[4rem] cursor-pointer text-base md:text-xs" onclick="copyToClipboard('#C6DAB7')">#C6DAB7</div>
+      </div>
+
+
+
+    <div class="flex justify-center mt-6">
+      <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-500">編集完了</button>
+      <a href="{% url 'activity:home' %}" class="ml-3 px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-300">戻る</a>
+    </div>
+  </form>
+</div>
+
+<!-- モーダルの背景。普段はdisplay:noneでblockにして表示する。 -->
+<div id="existingContaine" style="display:none" class="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 z-50">
+  <!-- モーダルの背景（見えてる部分） -->
+  <div class="bg-white w-11/12 h-2/3 md:max-w-md mx-auto rounded shadow-lg p-6 mt-20 relative">
+   <p class="text-center mt-8">既に同じ名前のカテゴリーが存在するようです。カテゴリーを編集しますか？</p>
+   <div class="flex justify-center mt-8 space-x-4">
+    {% comment %} 書くボタンにバックエンドに合わせてidを足した。 {% endcomment %}
+    <button class="bg-orangerange text-white px-4 py-2 rounded" id="createNewCategoryForExisting">はい</button>
+    <button class="bg-orangerange text-white px-4 py-2 rounded" id="cancelNewCategoryForExisting">キャンセル</button>
+   </div>
+  </div>
+ </div>
+
+
+ {% comment %} 念の為に取っておく。バッグエンドが記載した文 {% endcomment %}
+  {% comment %} {# モーダル for existing category #}
   <div id="existingContainer" style="display:none;">
     <p>既に同じ名前のカテゴリーが存在するようです。カテゴリーを編集しますか？</p>
     <button id="createNewCategoryForExisting">はい</button>
     <button id="cancelNewCategoryForExisting">キャンセル</button>
-  </div>
+  </div> {% endcomment %}
 
-  <script>
-  document.getElementById("categoryEditForm").addEventListener("submit", function(event) {
-    event.preventDefault();
 
-    let categoryName = document.getElementsByName("name")[0].value;
-    let exclude_id = "{{ object.id }}";
-    let formData = new FormData(event.target);
+{% comment %} 存在するカテゴリー用モーダル {% endcomment %}
+<script src="{% static 'admin/js/existing_edit.js' %}"></script>
 
-    fetch("{% url 'categories:check_duplicate_edit' %}", {
-      method: "POST",
-      body: JSON.stringify({ "name": categoryName, "exclude_id": exclude_id }),
-      headers: {
-        "Content-Type": "application/json",
-        "X-CSRFToken": "{{ csrf_token }}"
-      }
-    }).then(response => response.json()).then(data => {
-      if (data.duplicate) {
-        document.getElementById("existingContainer").style.display = "block";
-        document.getElementById("createNewCategoryForExisting").onclick = function() {
-          event.target.submit();
-        }
-        document.getElementById("cancelNewCategoryForExisting").onclick = function() {
-          document.getElementById("existingContainer").style.display = "none";
-        }
-      } else {
-        event.target.submit();
-      }
-    });
-  });
-  </script>
+{% comment %} クリップボード保存機能を持たせている。 {% endcomment %}
+<script src="{% static 'admin/js/category_add.js' %}"></script>
 {% endblock %}
