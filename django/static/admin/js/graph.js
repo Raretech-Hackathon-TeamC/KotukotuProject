@@ -49,10 +49,14 @@ const config = {
   scales: {
    y: {
     beginAtZero: true,
+    stacked: true,
     ticks: {
      stepSize: 2,
      max: 8
     }
+   },
+   x: {
+    stacked: true // 縦に積み上げ
    }
   }
  }
