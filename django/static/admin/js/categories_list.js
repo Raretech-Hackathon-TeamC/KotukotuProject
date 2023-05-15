@@ -51,6 +51,7 @@
         if (categoryList) {
           categoryList.appendChild(categoryElement);
         }
+
         // 768px以下の画面幅用に要素を複製
         if (categoryListMobile) {
           const categoryElementMobile = categoryElement.cloneNode(true);
@@ -58,6 +59,19 @@
           categoryElementMobile.className = `bg-${category.color_code} text-textBlack rounded-lg p-2 mx-auto w-full h-12 flex justify-between items-center mb-4 mx-8`;
           // categoryListMobile要素に作成したdiv要素
           categoryListMobile.appendChild(categoryElementMobile);
+        }
+
+        // div要素をクリックしたときのイベントリスナーを追加
+        categoryElement.addEventListener("click", () => {
+          // クリックしたときに詳細ページに遷移する
+          window.location.href = `/categories/${category.id}/`;
+        });
+
+        if (categoryListMobile) {
+          const categoryElementMobile = categoryListMobile.lastChild;
+          categoryElementMobile.addEventListener("click", () => {
+            window.location.href = `/categories/${category.id}/`;
+          });
         }
       });
     }
