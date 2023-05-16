@@ -12,7 +12,7 @@ class Category(models.Model):
     is_deleted = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"{self.name}[{self.goal}]"
+        return f"{self.name}"
 
 class ActivityCategory(models.Model):
     category = models.ForeignKey(Category, on_delete=models.PROTECT)
