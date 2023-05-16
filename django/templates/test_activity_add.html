@@ -64,10 +64,18 @@
             const totalDaysResponse = await fetch('{% url "activity:get_total_days" %}');
             const totalDaysData = await totalDaysResponse.json();
 
+            // 名言をサーバーから取得します。
+            const quoteResponse = await fetch('{% url "quotes:random_quote" %}');
+            const quoteData = await quoteResponse.json();
+
             // 累計日数の取得が成功したら
-            if (totalDaysResponse.ok) {
+            if (totalDaysResponse.ok && quoteResponse.ok) {
                 // 累計日数を画面に表示します。
                 document.getElementById('totalDays').textContent = '活動累計日数: ' + totalDaysData.total_days;
+                // 名言を画面に表示します。
+                const quoteElement = document.createElement('p');
+                quoteElement.textContent = '名言: ' + quoteData.quote;
+                document.getElementById('successModal').appendChild(quoteElement);
                 // 成功のメッセージを表示します。
                 document.getElementById('successModal').style.display = 'block';
             } else {

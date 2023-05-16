@@ -110,7 +110,7 @@ class ActivityAddView(LoginRequiredMixin, generic.CreateView):
     model = ActivityRecord
     form_class = ActivityRecordForm
     #! todo: 動作確認時にtestを追加
-    template_name = 'activity_add.html'
+    template_name = 'test_activity_add.html'
     success_url = reverse_lazy('activity:home')
 
     # フォームが有効な場合、リクエストユーザーを設定
