@@ -123,12 +123,12 @@ class ActivityAddView(LoginRequiredMixin, generic.CreateView):
         kwargs.update({'user': self.request.user})
         return kwargs
     
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        # カテゴリーリストを取得し、contextに追加する
-        categories = Category.objects.filter(user=self.request.user, is_deleted=False)
-        context['categories'] = categories
-        return context
+    # def get_context_data(self, **kwargs):
+    #     context = super().get_context_data(**kwargs)
+    #     # カテゴリーリストを取得し、contextに追加する
+    #     categories = Category.objects.filter(user=self.request.user, is_deleted=False)
+    #     context['categories'] = categories
+    #     return context
 
 
     # POSTリクエストの場合、ajax_submitメソッドを呼び出す

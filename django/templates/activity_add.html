@@ -43,8 +43,9 @@ bg-snow text-textBlack font-NotoSans
       <img src="{% static 'admin/img/pencil-icon.png' %}" alt="category icon" class="absolute left-4 top-1/2 transform -translate-y-1/2 h-6 w-6" />
       <select id="category" name="{{ form.category.name }}" class="form-select block bg-gray-300 w-1/2 translate-x-1/2 translate-y-1/3 pl-16 pr-8 py-2 bg-transparent text-textBlack rounded-lg">
           <!-- カテゴリーオプションはJavaScriptで動的に追加する。 -->
-        {% for category in categories %}
-          <option value="{{ category.id }}">{{ category.name }}</option>
+          <option value="" selected>カテゴリー</option>
+          {% for category in form.fields.category.queryset %}
+          <option value="{{ category.id }}" {% if category.id == form.fields.category.initial %}selected{% endif %}>{{ category.name }}</option>
         {% endfor %}
       </select>
   </div>
