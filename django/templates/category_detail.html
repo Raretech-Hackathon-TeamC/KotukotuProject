@@ -14,6 +14,7 @@
     </div>
     <p>カテゴリーの目標： <span id="category-goal"></span></p>
     <p>カテゴリーの累計時間： <span id="category-total-duration"></span></p>
+    <p>カテゴリーの累計日数： <span id="category_total_days"></span></p>
     <ul id="date-list"></ul>
     <ul id="duration-list"></ul>
 
@@ -28,6 +29,7 @@
             $('#category-info').css('background-color', data.color_code);
             $('#category-goal').text(data.goal);
             $('#category-total-duration').text(data.category_total_duration);
+            $('#category_total_days').text(data.category_total_days);
 
             const $dateList = $('#date-list');
             const $durationList = $('#duration-list');
