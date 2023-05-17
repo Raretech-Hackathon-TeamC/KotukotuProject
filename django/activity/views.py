@@ -21,7 +21,6 @@ class HomeView(LoginRequiredMixin, generic.TemplateView):
         context['categories_json_url'] = reverse('categories:categories_json')
         return context
 
-# TODO: カテゴリー機能別色分け機能の追加
 
 # ホーム画面へJson型のデータを送信する(非同期通信)
 class HomeAjaxView(LoginRequiredMixin, generic.View):
@@ -95,7 +94,7 @@ class HomeAjaxView(LoginRequiredMixin, generic.View):
             'total_days': total_days,
 
             # 'total_duration' は全ての記録の持続時間を合計し、時間:分の形式に変換します。
-            'total_duration': f"{total_hours}.{total_minutes:02d}",
+            'total_duration': f"{total_hours}:{total_minutes:02d}",
 
             # 'category_colors' は各カテゴリーとその色情報のマッピングを作成します。
             'category_colors': category_colors,
@@ -122,14 +121,6 @@ class ActivityAddView(LoginRequiredMixin, generic.CreateView):
         kwargs = super(ActivityAddView, self).get_form_kwargs()
         kwargs.update({'user': self.request.user})
         return kwargs
-    
-    # def get_context_data(self, **kwargs):
-    #     context = super().get_context_data(**kwargs)
-    #     # カテゴリーリストを取得し、contextに追加する
-    #     categories = Category.objects.filter(user=self.request.user, is_deleted=False)
-    #     context['categories'] = categories
-    #     return context
-
 
     # POSTリクエストの場合、ajax_submitメソッドを呼び出す
     def dispatch(self, request, *args, **kwargs):
