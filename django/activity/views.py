@@ -165,7 +165,8 @@ def get_total_days(request):
 class ActivityListView(LoginRequiredMixin, generic.View):
     def get(self, request, *args, **kwargs):
         #! todo: 動作確認時にtestを追加
-        return render(request, 'activity_list.html')
+        # activity_list.htmlからactivity_list.jsへ変更
+        return render(request, 'activity_list.js')
 
 # レコード画面にJson型のデータを送信する(非同期通信)
 class ActivityListAjaxView(LoginRequiredMixin, generic.View):
