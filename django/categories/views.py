@@ -1,11 +1,10 @@
-from django.shortcuts import render
 from django.views import generic
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 import json
-from .models import Category, ActivityCategory
+from .models import Category
 from .forms import CategoryForm
 from datetime import timedelta, datetime
 from activity.models import ActivityRecord
@@ -80,7 +79,11 @@ class CategoryDetailAjaxView(generic.DetailView):
 
         # カテゴリーの累計時間を計算
         total_duration_datetime = datetime(1, 1, 1) + timedelta(minutes=total_duration)
-        category_data['category_total_duration'] = total_duration_datetime.strftime('%H:%M')
+        category_data['category_total_duration'] = total_duration_datetime.strftime('%-H:%M')
+
+        # カテゴリーの累計日数を計算
+        category_dates = activities.values_list('date', flat=True).distinct()
+        category_data['category_total_days'] = category_dates.count()
 
         return JsonResponse(category_data)
 
