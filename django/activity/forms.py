@@ -1,7 +1,6 @@
 from django import forms
 from .models import ActivityRecord
 from categories.models import Category, ActivityCategory
-from django.core.exceptions import ValidationError
 from datetime import date
 
 # ActivityRecord登録・編集用フォーム
