@@ -59,8 +59,6 @@ async function submitForm() {
 
   // モーダルを表示
   showModal();
-  // 成功モーダルウィンドウの表示
-  document.getElementById("modal-bg").style.display = "block";
   } else {
   // エラーメッセージを表示またはログに記録
   console.error(data.error);
