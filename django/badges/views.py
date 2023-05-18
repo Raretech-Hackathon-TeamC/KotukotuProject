@@ -32,16 +32,16 @@ def check_total_activities(user, condition_value, comparator):
 
 # ２つの値を比較し、true/falseの結果を返す関数
 def compare_values(actual_value, condition_value, comparator):
-    if comparator == '>':
-        return actual_value > condition_value
-    elif comparator == '<':
-        return actual_value < condition_value
-    elif comparator == '>=':
-        return actual_value >= condition_value
+    if comparator == '<':
+        return condition_value < actual_value
+    elif comparator == '>':
+        return condition_value > actual_value
     elif comparator == '<=':
-        return actual_value <= condition_value
+        return condition_value <= actual_value
+    elif comparator == '>=':
+        return condition_value >= actual_value
     else:  # comparator == '=':
-        return actual_value == condition_value
+        return condition_value == actual_value
 
 
 # ActivityRecordが保存されるたびに呼び出され、バッジの獲得条件をチェックし、条件が満たされていればUserBadgeを生成する関数
