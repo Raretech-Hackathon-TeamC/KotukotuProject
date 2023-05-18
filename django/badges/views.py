@@ -89,6 +89,7 @@ class BadgeListAjaxView(LoginRequiredMixin, generic.View):
         # 獲得したバッジの情報を元に、データを作成します。
         data = [{
                 "badge_id": ub.badge.pk,
+                "badge_description": ub.badge.description,
                 "badge_name": ub.badge.name,
                 "badge_type": ub.badge.badge_type,
                 "is_unlocked": True,  # ユーザーが獲得したため、is_unlockedはTrueです。
@@ -106,6 +107,7 @@ class BadgeListAjaxView(LoginRequiredMixin, generic.View):
                 data.append({
                     "badge_id": badge.pk,
                     "badge_name": badge.name,
+                    "badge_description": badge.description,
                     "badge_type": badge.badge_type,
                     "is_unlocked": False,  # 未獲得のため、is_unlockedはFalseです。
                     "date_unlocked": None,  # 未獲得のため、date_unlockedはNoneです。

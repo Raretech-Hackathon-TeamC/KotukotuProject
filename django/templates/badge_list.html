@@ -46,6 +46,7 @@
                     badgeDiv.className = `badge ${badge.badge_type.toLowerCase()} ${badge.is_unlocked ? '' : 'locked'}`;
                     badgeDiv.innerHTML = `
                         <h3>${badge.badge_name}</h3>
+                        <p>${badge.badge_description}</p>
                         <p>${badge.is_unlocked ? '解除日: ' + badge.date_unlocked : '未解除'}</p>
                     `;
                     badgeList.appendChild(badgeDiv);
