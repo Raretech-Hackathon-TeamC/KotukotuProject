@@ -33,10 +33,10 @@ services:
     env_file:
       - .env
     # 先にdbを起動してからappを起動する
-    depends_on:
-      db:
-        # dbのヘルスチェックが終わってからappを起動させる
-        condition: service_healthy
+    # depends_on:
+    #   db:
+    #     # dbのヘルスチェックが終わってからappを起動させる
+    #     condition: service_healthy
 
   nginx:
     build:
