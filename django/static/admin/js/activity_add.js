@@ -121,6 +121,22 @@ document.getElementById("recordButton").addEventListener("click", function () {
  location.href = '/activity/list/';
 });
 
+// DOMContentLoadedイベントを待ってから、処理を実行する
+document.addEventListener('DOMContentLoaded', function() {
+  // /quotes/random/ へのGETリクエストを送信する
+  fetch('/quotes/random/')
+    // レスポンスをJSON形式で解析する
+    .then(response => response.json())
+    // JSONデータから引用を抽出し、HTML要素にセットする
+    .then(data => {
+      var quote = data.quote;
+      document.querySelector("#quote").textContent = quote;
+    })
+    // エラーが発生した場合には、コンソールにエラーメッセージを表示する
+    .catch(error => console.error(error));
+});
+
+
 // 挙動まとめ
 // このコードは、フォームのデータを送信し、サーバーからの応答を待ってから、モーダルウィンドウを表示することを目的としています。
 // フォームの送信は、submitForm() 関数で行われており、フォームデータを取得してサーバーに送信します。応答として受け取った JSON データは、送信が成功した場合、累計日数を取得して、その値を totalDays の要素に表示します。
