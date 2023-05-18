@@ -29,6 +29,9 @@ class Badge(models.Model):
     comparator = models.CharField(max_length=2, choices=COMPARATORS, default='<=',null=False, blank=False)
     is_available = models.BooleanField(default=True)
 
+    def __str__(self):
+        return self.name
+
 class UserBadge(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
     badge = models.ForeignKey(Badge, on_delete=models.PROTECT)
@@ -36,3 +39,6 @@ class UserBadge(models.Model):
 
     class Meta:
         unique_together = ('user', 'badge',)
+
+    def __str__(self):
+        return f'{self.badge.name} - {self.user}'
