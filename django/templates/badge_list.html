@@ -102,21 +102,6 @@ bg-snow text-textBlack font-NotoSans
             border-radius: 5px;
             color: white;
         }
-        .bronze {
-            background-color: #cd7f32;
-        }
-        .silver {
-            background-color: #c0c0c0;
-        }
-        .gold {
-            background-color: #ffd700;
-        }
-        .platinum {
-            background-color: #e5e4e2;
-        }
-        .diamond {
-            background-color: #b9f2ff;
-        }
         .locked {
             filter: grayscale(100%);
         }
@@ -124,7 +109,7 @@ bg-snow text-textBlack font-NotoSans
 </head> {% endcomment %}
 {% comment %} <body>
     <header>
-      <h1>実績</h1>
+        <h1>実績</h1>
     </header>
     <div id="badgeList"></div>
 
@@ -133,11 +118,12 @@ bg-snow text-textBlack font-NotoSans
             fetch('/badges/ajax_get_data/')
             .then(response => response.json())
             .then(data => {
-              console.log(data);
+                console.log(data);
                 let badgeList = document.getElementById('badgeList');
                 data.forEach(badge => {
                     let badgeDiv = document.createElement('div');
-                    badgeDiv.className = `badge ${badge.badge_type.toLowerCase()} ${badge.is_unlocked ? '' : 'locked'}`;
+                    badgeDiv.className = `badge ${badge.is_unlocked ? '' : 'locked'}`;
+                    badgeDiv.style.backgroundColor = badge.color_code;
                     badgeDiv.innerHTML = `
                         <h3>${badge.badge_name}</h3>
                         <p>${badge.badge_description}</p>
