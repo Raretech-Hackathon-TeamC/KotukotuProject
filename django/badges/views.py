@@ -5,7 +5,7 @@ from django.dispatch import receiver
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import generic
 from activity.models import ActivityRecord
-from .models import Badge, UserBadge, BadgeTypeColor
+from .models import Badge, UserBadge, BadgeType
 from django.http import JsonResponse
 
 # ユーザーの累計時間を取得し、指定した条件値と比較する関数
@@ -92,7 +92,7 @@ class BadgeListAjaxView(LoginRequiredMixin, generic.View):
                 "badge_name": ub.badge.name,
                 "badge_description": ub.badge.description,
                 "badge_type": ub.badge.badge_type,
-                "color_code": BadgeTypeColor.objects.get(badge_type=ub.badge.badge_type).color_code,
+                "color_code": BadgeType.objects.get(badge_type=ub.badge.badge_type).color_code,
                 "is_unlocked": True,  # ユーザーが獲得したため、is_unlockedはTrueです。
                 "date_unlocked": ub.date_unlocked  # 獲得した日付
                 }
@@ -110,7 +110,7 @@ class BadgeListAjaxView(LoginRequiredMixin, generic.View):
                     "badge_name": badge.name,
                     "badge_description": badge.description,
                     "badge_type": badge.badge_type,
-                    "color_code": BadgeTypeColor.objects.get(badge_type=badge.badge_type).color_code,
+                    "color_code": BadgeType.objects.get(badge_type=badge.badge_type).color_code,
                     "is_unlocked": False,  # 未獲得のため、is_unlockedはFalseです。
                     "date_unlocked": None,  # 未獲得のため、date_unlockedはNoneです。
                 })

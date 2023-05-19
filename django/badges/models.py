@@ -1,7 +1,7 @@
 from django.db import models
 from django.conf import settings
 
-class BadgeTypeColor(models.Model):
+class BadgeType(models.Model):
     BADGE_TYPES = [
         ('bronze', 'ブロンズ'),
         ('silver', 'シルバー'),
@@ -30,7 +30,7 @@ class Badge(models.Model):
     ]
     name = models.CharField(max_length=255, null=False, blank=False)
     description = models.TextField(null=False, blank=False)
-    badge_type = models.CharField(max_length=255, choices=BadgeTypeColor.BADGE_TYPES, null=False, blank=False)
+    badge_type = models.CharField(max_length=255, choices=BadgeType.BADGE_TYPES, null=False, blank=False)
     condition_type = models.CharField(max_length=255, choices=CONDITION_TYPES, null=False, blank=False)
     condition_value = models.IntegerField(null=False, blank=False)
     comparator = models.CharField(max_length=2, choices=COMPARATORS, default='<=',null=False, blank=False)
