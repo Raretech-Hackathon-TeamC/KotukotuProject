@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'users.apps.UsersConfig',
     'activity.apps.ActivityConfig',
     'categories.apps.CategoriesConfig',
-    'quotes.apps.QuotesConfig'
+    'quotes.apps.QuotesConfig',
+    'badges.apps.BadgesConfig',
 ]
 
 # カスタムユーザーモデルを指定
