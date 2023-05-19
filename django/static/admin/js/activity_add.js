@@ -67,6 +67,11 @@ async function submitForm() {
   // フォーム送信のエラーメッセージを表示
   displayErrors(data.errors);
   }
+  /// ×ボタンをクリックした際のリダイレクト処理
+  document.getElementById("close-modal").addEventListener("click", function() {
+    // activity_add画面にリダイレクト
+    window.location.href = "/activity/add/";
+    });
 }
 
 // エラーメッセージを表示する関数
