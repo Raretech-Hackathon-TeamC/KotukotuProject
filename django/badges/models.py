@@ -1,7 +1,7 @@
 from django.db import models
 from django.conf import settings
 
-class Badge(models.Model):
+class BadgeTypeColor(models.Model):
     BADGE_TYPES = [
         ('bronze', 'ブロンズ'),
         ('silver', 'シルバー'),
@@ -9,21 +9,28 @@ class Badge(models.Model):
         ('platinum', 'プラチナ'),
         ('diamond', 'ダイヤ'),
     ]
+    badge_type = models.CharField(max_length=255, choices=BADGE_TYPES, unique=True)
+    color_code = models.CharField(max_length=7)
+
+    def __str__(self):
+        return f'{self.badge_type} - {self.color_code}'
+
+class Badge(models.Model):
     CONDITION_TYPES = [
         ('total_duration', '累計時間'),
         ('total_days', '累計日数'),
         ('total_activities', '累計積み上げ数'),
     ]
     COMPARATORS = [
-        ('<', '<'),
-        ('>', '>'),
-        ('=', '='),
-        ('<=', '<='),
-        ('>=', '>='),
+        ('<', 'より大きい'),
+        ('>', 'より小さい'),
+        ('=', '等しい'),
+        ('<=', '以上'),
+        ('>=', '以下'),
     ]
     name = models.CharField(max_length=255, null=False, blank=False)
     description = models.TextField(null=False, blank=False)
-    badge_type = models.CharField(max_length=255, choices=BADGE_TYPES, null=False, blank=False)
+    badge_type = models.CharField(max_length=255, choices=BadgeTypeColor.BADGE_TYPES, null=False, blank=False)
     condition_type = models.CharField(max_length=255, choices=CONDITION_TYPES, null=False, blank=False)
     condition_value = models.IntegerField(null=False, blank=False)
     comparator = models.CharField(max_length=2, choices=COMPARATORS, default='<=',null=False, blank=False)
