@@ -11,7 +11,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='BadgeType',
+            name='BadgeTypeColor',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('badge_type', models.CharField(choices=[('bronze', 'ブロンズ'), ('silver', 'シルバー'), ('gold', 'ゴールド'), ('platinum', 'プラチナ'), ('diamond', 'ダイヤ')], max_length=255, unique=True)),
