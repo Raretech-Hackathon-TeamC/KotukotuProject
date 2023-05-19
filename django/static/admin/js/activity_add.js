@@ -59,8 +59,6 @@ async function submitForm() {
 
   // モーダルを表示
   showModal();
-  // 成功モーダルウィンドウの表示
-  document.getElementById("modal-bg").style.display = "block";
   } else {
   // エラーメッセージを表示またはログに記録
   console.error(data.error);
@@ -69,6 +67,11 @@ async function submitForm() {
   // フォーム送信のエラーメッセージを表示
   displayErrors(data.errors);
   }
+  /// ×ボタンをクリックした際のリダイレクト処理
+  document.getElementById("close-modal").addEventListener("click", function() {
+    // activity_add画面にリダイレクト
+    window.location.href = "/activity/add/";
+    });
 }
 
 // エラーメッセージを表示する関数
@@ -120,6 +123,22 @@ document.getElementById("recordButton").addEventListener("click", function () {
  // レコード画面への遷移
  location.href = '/activity/list/';
 });
+
+// DOMContentLoadedイベントを待ってから、処理を実行する
+document.addEventListener('DOMContentLoaded', function() {
+  // /quotes/random/ へのGETリクエストを送信する
+  fetch('/quotes/random/')
+    // レスポンスをJSON形式で解析する
+    .then(response => response.json())
+    // JSONデータから引用を抽出し、HTML要素にセットする
+    .then(data => {
+      var quote = data.quote;
+      document.querySelector("#quote").textContent = quote;
+    })
+    // エラーが発生した場合には、コンソールにエラーメッセージを表示する
+    .catch(error => console.error(error));
+});
+
 
 // 挙動まとめ
 // このコードは、フォームのデータを送信し、サーバーからの応答を待ってから、モーダルウィンドウを表示することを目的としています。
