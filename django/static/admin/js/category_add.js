@@ -20,4 +20,5 @@ function copyToClipboard(colorCode) {
     // navigator.clipboard.writeText(colorCode);
     // カラーコードを入力フィールドに自動入力する処理
     document.getElementById("id_color_code").value = colorCode;
+    document.getElementById("color-circle").style.backgroundColor = colorCode;
 }

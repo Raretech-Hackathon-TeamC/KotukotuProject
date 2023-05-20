@@ -43,10 +43,20 @@ bg-snow text-textBlack font-NotoSans
    </div>
 
    <!-- カラーの選択 -->
-   <div class="mx-auto w-full md:w-3/4 py-2 bg-blackGreen text-textBlack rounded-lg flex items-center justify-center">
+   <!-- <div class="mx-auto w-full md:w-3/4 py-2 bg-blackGreen text-textBlack rounded-lg flex items-center justify-center">
      {{ form.color_code.label_tag }}
      {{ form.color_code }}
-   </div>
+   </div> -->
+   <!-- カラーの選択 -->
+  <div class="mx-auto w-full md:w-3/4 py-2 bg-blackGreen text-textBlack rounded-lg flex items-center justify-center">
+    {{ form.color_code.label_tag }}
+
+    {{ form.color_code }}
+
+    <div class="color-sample" style="display: flex; align-items: center; margin-left: 10px;">
+      <div id="color-circle" style="width: 20px; height: 20px; border-radius: 50%; margin-right: 5px;"></div>
+    </div>
+  </div>
 
 
         <!-- 色の選択。押したらクリップボードにコピーされる -->
