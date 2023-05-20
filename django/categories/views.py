@@ -68,6 +68,10 @@ class CategoryDetailAjaxView(generic.DetailView):
         # カテゴリーに紐づくアクティビティの合計時間を取得
         activities = ActivityRecord.objects.filter(activitycategory__category=category)
         total_duration = activities.aggregate(total_duration=Sum('duration'))['total_duration']
+
+        #  total_durationがNoneの場合は0に設定する
+        total_duration = total_duration if total_duration is not None else 0
+
         activity_duration_dict = activities.annotate(day=Sum('duration')).values('day', 'date')
         activity_duration_dict = {activity['date']: activity['day'] for activity in activity_duration_dict}
 
