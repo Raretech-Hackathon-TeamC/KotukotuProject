@@ -5,7 +5,7 @@ function static(path) {
  }
  
  // アクティビティレコードを取得する非同期関数
- async function fetchBadges() {
+ async function fetchBadgeData() {
   try {
    // '/badges/ajax_get_data/'というURLからデータを非同期で取得する。urls.pyを参照している。
    const response = await fetch("/badges/ajax_get_data/");
@@ -13,18 +13,18 @@ function static(path) {
    // 取得したデータをJSON形式にする。
    const data = await response.json();
  
-   const container = document.getElementById("chat-container-badge");
+   const badgeList = document.getElementById("badgeList");
  
    // データが存在しない場合のメッセージを表示
-   if (!data.badges || data.badges.length === 0) {
+   if (data.length === 0) {
     const emptyMessage = document.createElement("p");
-    emptyMessage.textContent = "リストがありません";
-    container.appendChild(emptyMessage);
-   } else {
+    emptyMessage.textContent = "バッジがありません";
+    badgeList.appendChild(emptyMessage);
+  } else {
     // データが存在する場合、それぞれのデータに対してチャットアイテムを作成し、追加する
-    data.badges.forEach(badge => {
+    data.forEach(badge => {
      const chatItem = createChatItem(badge);
-     container.appendChild(chatItem);
+     badgeList.appendChild(chatItem);
     });
    }
   } catch (error) {
@@ -37,7 +37,7 @@ function static(path) {
  function createChatItem(badge) {
   const chatItem = document.createElement("div");
   chatItem.classList.add("chat-bubble");
-  chatItem.style.backgroundColor = badge.category_color; // チャットの色を設定
+  chatItem.style.backgroundColor = badge.color_code; // チャットの色を設定
  
   const chatText = document.createTextNode(`${badge.date_unlocked}に${badge.badge_name}を獲得しました！`);
   chatItem.appendChild(chatText);
@@ -91,4 +91,4 @@ function static(path) {
  }
  
  // 非同期関数を呼び出す
- fetchBadges();
+ fetchBadgeData();
