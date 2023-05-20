@@ -93,9 +93,10 @@ function createChatItem(record) {
     // const test = localStorage.getItem('userToken');
     // console.log(test);
 
-    const setToken = document.getElementById("setToken");
+    // const setToken = document.getElementById("setToken");
+    const mattermost = document.getElementById("mattermost");
     
-    setToken.addEventListener('click', function() {
+    mattermost.addEventListener('click', function() {
         tokenModal.style.display = "block";
         // HTMLから要素を取得
         const registerButton = document.getElementById("registerButton");
