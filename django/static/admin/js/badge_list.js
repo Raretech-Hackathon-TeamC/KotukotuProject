@@ -46,7 +46,8 @@ function static(path) {
   } else {
     chatItem.style.backgroundColor = "#A6A6A6"; // グレーの背景色
 
-    const chatText = document.createTextNode(`${badge.badge_name}は未獲得です`);
+    const chatText = document.createElement("span");
+    chatText.innerHTML = `${badge.badge_name}は未獲得です。<br>獲得条件は${badge.badge_description}です。`;
     chatItem.appendChild(chatText);
   }
 
