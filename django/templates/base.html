@@ -70,13 +70,13 @@
           border-color: var(--color-blackGreen) !important;
         }
         .hover\:category:hover {
-          background-color: rgba(255, 255, 255, 0.1); 
+          background-color: rgba(255, 255, 255, 0.1);
         }
         .category {
           cursor: pointer;
         }
-        
-        
+
+
       </style>
 
 
@@ -114,6 +114,9 @@
       <li>
        <a href="{% url 'categories:category_add' %}" class="hover:underline">カテゴリー追加</a>
       </li>
+      <li>
+       <a href="{% url 'badges:badge_list' %}" class="hover:underline">実績</a>
+      </li>
      </ul>
      <button
       type="submit"
@@ -136,7 +139,7 @@
    </nav>
   </div>
  </header>
- 
+
  <!-- モバイルメニュー（横幅760px以下でハンバーガーメニューを押したら表示） -->
  <div
   id="mobileMenu"
@@ -149,7 +152,7 @@
    alt="閉じるボタン"
    class="absolute top-11 right-2 h-6 w-auto cursor-pointer z-30"
   />
- 
+
   <!-- メニューのコンテンツが含まれるコンテナ -->
   <div class="container mx-auto px-4 h-full flex flex-col justify-center items-center z-30">
    <!-- メニューのリスト -->
@@ -182,7 +185,7 @@
  {% comment %} モーダルのjs（home.js）は共通で読み込む {% endcomment %}
  <script src="{% static 'admin/js/menu_modal.js' %}"></script>
 
- 
+
   {% block content %} {% endblock content %}
  </body>
 </html>
