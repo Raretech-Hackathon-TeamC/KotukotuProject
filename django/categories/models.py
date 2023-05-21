@@ -16,7 +16,7 @@ class Category(models.Model):
 
 class ActivityCategory(models.Model):
     category = models.ForeignKey(Category, on_delete=models.PROTECT)
-    activity_record = models.ForeignKey(ActivityRecord, on_delete=models.PROTECT)
+    activity_record = models.ForeignKey(ActivityRecord, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.category.name} - {self.activity_record.id}"

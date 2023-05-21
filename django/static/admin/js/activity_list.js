@@ -78,7 +78,7 @@ function createChatItem(record) {
  trashButton.addEventListener("click", function (event) {
   event.preventDefault();
   // ここで削除するアクティビティのIDをフォームのアクションにセット
-  deleteForm.action = `/activity/delete/${record.id}/`;
+  deleteForm.action = `/activity/${record.id}/delete/`;
   deleteModal.style.display = "block";
  });
 
