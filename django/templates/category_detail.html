@@ -28,7 +28,10 @@ bg-snow text-textBlack font-NotoSans
  </div>
 
 <!-- タイトルにカテゴリーの色、名前、目標を載せる -->
-<div id="category-info" class="container mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center">
+<div id="category-info" class="container mx-auto px-4 sm:px-6 lg:px-8 flex flex-col">
+  <p class="pt-4 text-xs md:text-base text-textBlack hover:text-white cursor-pointer text-left"
+  onclick="window.location.href='{% url 'categories:category_edit' pk=category.id %}'"
+  > ＜カテゴリーを編集する＞</p>
   <h1 id="category-name" class="pt-4 text-center text-xl md:text-3xl text-textBlack"></h1>
   <span id="category-goal" class="pt-4 text-center text-sm md:text-base text-textBlack"></span>
 </div>
