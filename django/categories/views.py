@@ -8,16 +8,16 @@ from .models import Category
 from .forms import CategoryForm
 from datetime import timedelta, datetime
 from activity.models import ActivityRecord
-from django.db.models import Sum
-from django.db.models import Q
+from django.db.models import Sum, Value
+from django.db.models.functions import Coalesce
 
 # Categoryの情報をJSON形式で返すView
 class CategoryHomeAjaxView(generic.View):
     def get(self, request, *args, **kwargs):
         # ユーザーが作成したカテゴリーの一覧を取得
         categories = Category.objects.filter(user=request.user, is_deleted=False).annotate(
-            total_duration=Sum('activitycategory__activity_record__duration')  # カテゴリーの総時間を計算
-        ).exclude(Q(activitycategory__activity_record__duration=None) | Q(total_duration=None))
+            total_duration=Coalesce(Sum('activitycategory__activity_record__duration'), Value(0))
+        )
 
         # カテゴリーの情報を辞書型で保存
         categories_data = [
@@ -48,6 +48,7 @@ class CategoryDetailView(LoginRequiredMixin, generic.DetailView):
 # カテゴリー毎の詳細画面へJson型のデータを送信する(非同期通信)
 class CategoryDetailAjaxView(generic.DetailView):
     model = Category
+    template_name = None
 
     def get(self, request, *args, **kwargs):
         # カテゴリーの基本情報を取得
@@ -67,6 +68,10 @@ class CategoryDetailAjaxView(generic.DetailView):
         # カテゴリーに紐づくアクティビティの合計時間を取得
         activities = ActivityRecord.objects.filter(activitycategory__category=category)
         total_duration = activities.aggregate(total_duration=Sum('duration'))['total_duration']
+
+        #  total_durationがNoneの場合は0に設定する
+        total_duration = total_duration if total_duration is not None else 0
+
         activity_duration_dict = activities.annotate(day=Sum('duration')).values('day', 'date')
         activity_duration_dict = {activity['date']: activity['day'] for activity in activity_duration_dict}
 

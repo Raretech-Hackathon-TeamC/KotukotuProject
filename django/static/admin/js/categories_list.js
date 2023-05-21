@@ -23,6 +23,7 @@
    // データが存在する場合
    categories.forEach(category => {
     // 新しいdiv要素を作成
+    console.log(category);
     const categoryElement = document.createElement("div");
     // 作成したdiv要素にCSSクラスを設定
     categoryElement.className = `category bg-${category.color_code} text-textBlack rounded-lg p-4 w-64 h-12 flex justify-between items-center mb-4`;
