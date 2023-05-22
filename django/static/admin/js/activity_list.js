@@ -42,7 +42,7 @@ function createChatItem(record) {
   const chatText = document.createTextNode(`${record.date}は${record.duration}時間頑張ったよ`);
   chatItem.appendChild(chatText);
 
-  if (record.memo.length >= 52) {
+  if (record.memo.length >= 0) {
     // テキストノードの作成
     const breakNode = document.createElement("br");
     const memoNode = document.createTextNode(` ${record.memo}`);
