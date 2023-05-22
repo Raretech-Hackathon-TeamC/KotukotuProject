@@ -76,3 +76,18 @@ let barChart; // barChartをグローバルスコープで宣言
   console.error("Error:", error);
  }
 })(); // 定義した非同期関数を実行します
+
+// 削除モーダルをクリックしたらモーダルを表示する。
+document.getElementById("deleteButton").addEventListener("click", function () {
+ document.getElementById("deleteModal").style.display = "block";
+});
+
+// モーダル内の×ボタン。
+document.getElementById("closeModal").addEventListener("click", function () {
+ document.getElementById("deleteModal").style.display = "none";
+});
+
+// モーダル内のキャンセルボタン。
+document.getElementById("deleateCancel").addEventListener("click", function () {
+ document.getElementById("deleteModal").style.display = "none";
+});
