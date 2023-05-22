@@ -39,13 +39,26 @@ function createChatItem(record) {
  chatItem.classList.add("chat-bubble");
  chatItem.style.backgroundColor = record.category_color; // チャットの色を設定
 
- const chatText = document.createTextNode(`${record.date}は${record.duration}時間頑張ったよ`);
- chatItem.appendChild(chatText);
+  const chatText = document.createTextNode(`${record.date}は${record.duration}時間頑張ったよ`);
+  chatItem.appendChild(chatText);
+
+  if (record.memo.length >= 0) {
+    // テキストノードの作成
+    const breakNode = document.createElement("br");
+    const memoNode = document.createTextNode(` ${record.memo}`);
+
+    // チャットアイテムにノードを追加
+    chatItem.appendChild(breakNode);
+    chatItem.appendChild(memoNode);
+  } else {
+    const memoNode = document.createTextNode(` ${record.memo}`);
+    chatItem.appendChild(memoNode);
+  }
 
  // メモのテキストを作成し、アイテムに追加
- const memoText = document.createElement("p");
- memoText.textContent = record.memo;
- chatItem.appendChild(memoText);
+//  const memoText = document.createElement("p");
+//  memoText.textContent = record.memo;
+//  chatItem.appendChild(memoText);
 
  //  亀の画像
  const chatImage = document.createElement("img");
