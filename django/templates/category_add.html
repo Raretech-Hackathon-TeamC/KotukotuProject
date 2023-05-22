@@ -48,27 +48,36 @@ bg-snow text-textBlack font-NotoSans
      {{ form.color_code }}
    </div> -->
    <!-- カラーの選択 -->
-  <div class="mx-auto w-full md:w-3/4 py-2 bg-blackGreen text-textBlack rounded-lg flex items-center justify-center">
-    {{ form.color_code.label_tag }}
-
-    {{ form.color_code }}
-
-    <div class="color-sample" style="display: flex; align-items: center; margin-left: 10px;">
-      <div id="color-circle" style="width: 20px; height: 20px; border-radius: 50%; margin-right: 5px;"></div>
-    </div>
-  </div>
-
-
-        <!-- 色の選択。押したらクリップボードにコピーされる -->
-      <div class="flex flex-wrap justify-center space-x-4">
-        <div class="w-16 h-16 md:w-16 md:h-16 bg-[#DAD4B7] rounded text-center line-height[6rem] md:line-height[4rem] cursor-pointer text-base md:text-xs" onclick="copyToClipboard('#DAD4B7')"></div>
-        <div class="w-16 h-16 md:w-16 md:h-16 bg-[#B7C1DA] rounded text-center line-height[6rem] md:line-height[4rem] cursor-pointer text-base md:text-xs" onclick="copyToClipboard('#B7C1DA')"></div>
-        <div class="w-16 h-16 md:w-16 md:h-16 bg-[#DABEB7] rounded text-center line-height[6rem] md:line-height[4rem] cursor-pointer text-base md:text-xs" onclick="copyToClipboard('#DABEB7')"></div>
-        <div class="w-16 h-16 md:w-16 md:h-16 bg-[#DAC6B7] rounded text-center line-height[6rem] md:line-height[4rem] cursor-pointer text-base md:text-xs" onclick="copyToClipboard('#DAC6B7')"></div>
-        <div class="w-16 h-16 md:w-16 md:h-16 bg-[#CFB7DA] rounded text-center line-height[6rem] md:line-height[4rem] cursor-pointer text-base md:text-xs" onclick="copyToClipboard('#CFB7DA')"></div>
-        <div class="w-16 h-16 md:w-16 md:h-16 bg-[#B7D6DA] rounded text-center line-height[6rem] md:line-height[4rem] cursor-pointer text-base md:text-xs" onclick="copyToClipboard('#B7D6DA')"></div>
-        <div class="w-16 h-16 md:w-16 md:h-16 bg-[#C6DAB7] rounded text-center line-height[6rem] md:line-height[4rem] cursor-pointer text-base md:text-xs" onclick="copyToClipboard('#C6DAB7')"></div>
+   <div class="mx-auto w-full md:w-3/4 py-2 bg-blackGreen text-textBlack rounded-lg flex items-center justify-center">
+    <div style="display: flex; align-items: center; justify-content: center; width: 100%;">
+      <label for="id_color_code" class="pr-2">Color:</label> <!-- margin-rightを削除し、justify-content: center;を追加 -->
+      <div class="color-sample">
+        <div id="color-circle" style="width: 160px; height: 25px;"></div> <!-- border-radiusを削除して四角形にする -->
       </div>
+    </div>
+    <div style="display: none;">
+      {{ form.color_code.label_tag }}
+      {{ form.color_code }}
+    </div>
+  </div>  
+  
+
+    <!-- <div class="color-sample" style="display: flex; align-items: center; margin-left: 10px;">
+      <div id="color-circle" style="width: 100px; height: 20px; border-radius: 10px; margin-right: 5px;"></div>
+    </div>    
+  </div> -->
+
+
+          <!-- 色の選択。押したらクリップボードにコピーされる -->
+        <div class="flex flex-wrap justify-center space-x-4">
+          <div class="w-16 h-16 md:w-16 md:h-16 bg-[#DAD4B7] rounded text-center line-height[6rem] md:line-height[4rem] cursor-pointer text-base md:text-xs" onclick="copyToClipboard('#DAD4B7')"></div>
+          <div class="w-16 h-16 md:w-16 md:h-16 bg-[#B7C1DA] rounded text-center line-height[6rem] md:line-height[4rem] cursor-pointer text-base md:text-xs" onclick="copyToClipboard('#B7C1DA')"></div>
+          <div class="w-16 h-16 md:w-16 md:h-16 bg-[#DABEB7] rounded text-center line-height[6rem] md:line-height[4rem] cursor-pointer text-base md:text-xs" onclick="copyToClipboard('#DABEB7')"></div>
+          <div class="w-16 h-16 md:w-16 md:h-16 bg-[#DAC6B7] rounded text-center line-height[6rem] md:line-height[4rem] cursor-pointer text-base md:text-xs" onclick="copyToClipboard('#DAC6B7')"></div>
+          <div class="w-16 h-16 md:w-16 md:h-16 bg-[#CFB7DA] rounded text-center line-height[6rem] md:line-height[4rem] cursor-pointer text-base md:text-xs" onclick="copyToClipboard('#CFB7DA')"></div>
+          <div class="w-16 h-16 md:w-16 md:h-16 bg-[#B7D6DA] rounded text-center line-height[6rem] md:line-height[4rem] cursor-pointer text-base md:text-xs" onclick="copyToClipboard('#B7D6DA')"></div>
+          <div class="w-16 h-16 md:w-16 md:h-16 bg-[#C6DAB7] rounded text-center line-height[6rem] md:line-height[4rem] cursor-pointer text-base md:text-xs" onclick="copyToClipboard('#C6DAB7')"></div>
+        </div>
 
 
 
