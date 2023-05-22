@@ -55,6 +55,27 @@ function createChatItem(record) {
  chatImage.classList.add("chat-image");
  chatItem.appendChild(chatImage);
 
+ // 編集ボタンの枠
+ const chatIcon = document.createElement("div");
+ chatIcon.classList.add("chat-icon");
+ 
+ // 枠の中にiconを挿入
+ const iconImage = document.createElement("img");
+ iconImage.src = static("admin/img/icon_activity_edit.svg");
+ iconImage.alt = "アクティビティ編集アイコン";
+ iconImage.classList.add("icon-image");
+
+ chatIcon.appendChild(iconImage);
+ chatItem.appendChild(chatIcon);
+
+ // 編集ボタンの遷移先url
+ chatIcon.addEventListener("click", function() {
+  // 画面遷移の処理を実装する
+  const activityId = record.id; // アクティビティのIDを取得する方法に合わせて記述
+  const url = `/activity/${activityId}/edit/`;
+  window.location.href = url;
+});
+
  // ゴミ箱ボタン。押したらモーダルを動かす。
  const trashButton = document.createElement("button");
  trashButton.type = "button";
