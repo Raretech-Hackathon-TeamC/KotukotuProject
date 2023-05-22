@@ -17,9 +17,9 @@ document.getElementById("close-modal").addEventListener("click", function () {
 
 async function submitForm() {
   // #65 5/22 サブミットボタン複数回押下を止める処理を追加します。
-  const submitButton = document.getElementById("recordSubmit");
+  // const submitButton = document.getElementById("recordSubmit");
   // console.log(submitButton);
-  submitButton.disabled = true;
+  // submitButton.disabled = true;
   // フォームデータを取得
   const formData = new FormData(document.querySelector("#activityRecordForm"));
 
