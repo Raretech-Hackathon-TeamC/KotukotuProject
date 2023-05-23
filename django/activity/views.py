@@ -172,7 +172,7 @@ class ActivityListAjaxView(LoginRequiredMixin, generic.View):
     # getリクエストの処理
     def get(self, request, *args, **kwargs):
         # ユーザーのアクティビティレコードを取得
-        activities = ActivityRecord.objects.filter(user=request.user)
+        activities = ActivityRecord.objects.filter(user=request.user).order_by('-created_at')
 
         # アクティビティに紐づくカテゴリーを一括で取得 (N+1問題の解消)
         # prefetch_relatedを使って、ActivityCategoryとCategoryを一度に取得
