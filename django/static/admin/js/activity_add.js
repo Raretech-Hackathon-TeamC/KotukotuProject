@@ -135,6 +135,13 @@ document.addEventListener('DOMContentLoaded', function() {
     .catch(error => console.error(error));
 });
 
+// カレンダーの表示を今日に設定
+const today = new Date();
+const year = today.getFullYear();
+const month = String(today.getMonth() + 1).padStart(2, "0");
+const day = String(today.getDate()).padStart(2, "0");
+const formattedDate = `${year}-${month}-${day}`;
+document.getElementById("date").value = formattedDate;
 
 // 挙動まとめ
 // このコードは、フォームのデータを送信し、サーバーからの応答を待ってから、モーダルウィンドウを表示することを目的としています。
