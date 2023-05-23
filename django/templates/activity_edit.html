@@ -40,7 +40,11 @@ bg-snow text-textBlack font-NotoSans
       <img src="{% static 'admin/img/pencil-icon.png' %}" alt="category icon" class="absolute left-4 top-1/2 transform -translate-y-1/2 h-6 w-6" />
       <select id="category" name="{{ form.category.name }}" class="form-select block bg-gray-300 w-1/2 translate-x-1/2 translate-y-1/3 pl-16 pr-8 py-2 bg-transparent text-textBlack rounded-lg">
         <!-- カテゴリーオプションの初期値指定 -->
-        <option>{{ form.fields.category.initial }}</option>
+        {% if form.fields.category.initial %}
+          <option value="">{{ form.fields.category.initial }}</option>
+        {% else %}
+          <option value="">カテゴリーを選択してください</option>
+        {% endif %}
         <!-- カテゴリーオプションの初期値を除いたデータを取得 -->
         {% for category in form.fields.category.queryset %}
           {% if category.id != form.category.value %}
