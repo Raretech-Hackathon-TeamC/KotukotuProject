@@ -22,3 +22,16 @@ function copyToClipboard(colorCode) {
     document.getElementById("id_color_code").value = colorCode;
     document.getElementById("color-circle").style.backgroundColor = colorCode;
 }
+
+
+// ボタンのクリックを処理する関数
+function handleButtonClick(event) {
+    // すべてのボタンからボーダーを削除
+    var buttons = document.querySelectorAll('.color-button');
+    for (var i = 0; i < buttons.length; i++) {
+      buttons[i].style.border = '';
+    }
+  
+    // クリックしたボタンにボーダーを追加
+    event.target.style.border = '5px solid white';
+  }
