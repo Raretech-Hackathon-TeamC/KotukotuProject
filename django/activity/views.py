@@ -239,6 +239,8 @@ class ActivityEditView(LoginRequiredMixin, generic.UpdateView):
             category = form.cleaned_data['category']
 
             if category:
+                # 既存の関連を削除し、新しいカテゴリーを設定する
+                ActivityCategory.objects.filter(activity_record=activity).delete()
                 ActivityCategory.objects.update_or_create(category=category, activity_record=activity)
 
             return JsonResponse({"success": True})
