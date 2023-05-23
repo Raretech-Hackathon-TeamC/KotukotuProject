@@ -17,14 +17,14 @@ bg-snow text-textBlack font-NotoSans
   <nav class="text-lg">
    <a href="{% url 'activity:home' %}" class="hover:underline text-#474747">ホーム</a>
    <span> &gt; </span>
-   <span>アクティビティ追加</span>
+   <span>積み上げ記録</span>
   </nav>
  </div>
 
 
 <!-- タイトルの作成 -->
 <h1 class="container mx-auto px-4 pt-4 text-center bg-snow text-xl md:text-3xl text-textBlack">
-  アクティビティを追加する
+  積み上げを記録する 
  </h1>
  <hr class="mx-10 my-4 border-2 border-blackGreen shadow-md" />
 
@@ -38,7 +38,7 @@ bg-snow text-textBlack font-NotoSans
     <div class="relative mx-auto w-1/2 h-14">
       <div class="absolute inset-0 bg-blackGreen rounded-lg"></div>
       <img src="{% static 'admin/img/pencil-icon.png' %}" alt="category icon" class="absolute left-4 top-1/2 transform -translate-y-1/2 h-6 w-6" />
-      <select id="category" name="{{ form.category.name }}" class="form-select block bg-gray-300 w-1/2 translate-x-1/2 translate-y-1/3 pl-16 pr-8 py-2 bg-transparent text-textBlack rounded-lg">
+      <select id="category" name="{{ form.category.name }}" class="form-select block bg-gray-300 w-3/4 translate-x-1/4 translate-y-1/3 pl-20 pr-8 py-2 bg-transparent text-textBlack rounded-lg" style="text-indent: 1.5em;">
         <!-- カテゴリーオプションの初期値指定 -->
         <option value="">カテゴリーを選択してください</option>
         <!-- カテゴリーオプションはformsからデータを取得 -->
