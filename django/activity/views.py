@@ -31,8 +31,8 @@ class HomeAjaxView(LoginRequiredMixin, generic.View):
 
         # request.userを使用して現在のユーザーに紐づくアクティビティ記録を取得
         # date__gte=end_dateは、日付がend_dateよりも大きいまたは等しい記録のみを取得するフィルター
-        # prefetchを用いてactivityに関連するカテゴリーを先に全て取得
-        activity_categories = ActivityCategory.objects.all()
+        # 'category__is_deleted=False'を追加して、削除されていないカテゴリーに関連するActivityCategoryのみを取得
+        activity_categories = ActivityCategory.objects.filter(category__is_deleted=False)
         records = ActivityRecord.objects.filter(user=self.request.user, date__gte=end_date).prefetch_related(Prefetch('activitycategory_set', queryset=activity_categories))
 
         # 全てのカテゴリーを取得
@@ -176,10 +176,11 @@ class ActivityListAjaxView(LoginRequiredMixin, generic.View):
 
         # アクティビティに紐づくカテゴリーを一括で取得 (N+1問題の解消)
         # prefetch_relatedを使って、ActivityCategoryとCategoryを一度に取得
+        # 'category__is_deleted=False'を追加して、削除されていないカテゴリーに関連するActivityCategoryのみを取得
         activities = activities.prefetch_related(
             Prefetch(
                 'activitycategory_set',
-                queryset=ActivityCategory.objects.select_related('category'),
+                queryset=ActivityCategory.objects.filter(category__is_deleted=False).select_related('category'),
                 to_attr='fetched_categories'
             )
         )
