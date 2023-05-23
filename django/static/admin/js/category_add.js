@@ -27,8 +27,8 @@ function copyToClipboard(colorCode) {
 // ボタンのクリックを処理する関数
 function handleButtonClick(event) {
     // すべてのボタンからボーダーを削除
-    var buttons = document.querySelectorAll('.color-button');
-    for (var i = 0; i < buttons.length; i++) {
+    let buttons = document.querySelectorAll('.color-button');
+    for (let i = 0; i < buttons.length; i++) {
       buttons[i].style.border = '';
     }
   
