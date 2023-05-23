@@ -10,10 +10,12 @@ from django.http import JsonResponse
 
 # ユーザーの累計時間を取得し、指定した条件値と比較する関数
 def check_total_duration(user, condition_value, comparator):
-    # ユーザーの全ての活動レコードから累計時間を合計します
-    total_duration = ActivityRecord.objects.filter(user=user).aggregate(Sum('duration'))['duration__sum']
-    # 合計時間と条件値を指定した比較演算子で比較します
-    return compare_values(total_duration, condition_value, comparator)
+    # ユーザーの全ての活動レコードから累計時間（分）を合計します
+    total_duration_minutes = ActivityRecord.objects.filter(user=user).aggregate(Sum('duration'))['duration__sum']
+    # 合計時間を時間単位に変換します
+    total_duration_hours = total_duration_minutes / 60
+    # 合計時間（時間）と条件値を指定した比較演算子で比較します
+    return compare_values(total_duration_hours, condition_value, comparator)
 
 # ユーザーの累計日数を取得し、指定した条件値と比較する関数
 def check_total_days(user, condition_value, comparator):
@@ -33,15 +35,15 @@ def check_total_activities(user, condition_value, comparator):
 # ２つの値を比較し、true/falseの結果を返す関数
 def compare_values(actual_value, condition_value, comparator):
     if comparator == '<':
-        return condition_value < actual_value
+        return actual_value < condition_value
     elif comparator == '>':
-        return condition_value > actual_value
+        return actual_value > condition_value
     elif comparator == '<=':
-        return condition_value <= actual_value
+        return actual_value <= condition_value
     elif comparator == '>=':
-        return condition_value >= actual_value
+        return actual_value >= condition_value
     else:  # comparator == '=':
-        return condition_value == actual_value
+        return actual_value == condition_value
 
 
 # ActivityRecordが保存されるたびに呼び出され、バッジの獲得条件をチェックし、条件が満たされていればUserBadgeを生成する関数
