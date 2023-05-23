@@ -96,7 +96,7 @@ class BadgeListAjaxView(LoginRequiredMixin, generic.View):
                 "badge_type": ub.badge.badge_type,
                 "color_code": BadgeType.objects.get(badge_type=ub.badge.badge_type).color_code,
                 "is_unlocked": True,  # ユーザーが獲得したため、is_unlockedはTrueです。
-                "date_unlocked": ub.date_unlocked.strftime('%Y/%m/%d')  # 獲得した日付
+                "date_unlocked": ub.date_unlocked.strftime('%Y/%-m/%-d')  # 獲得した日付
                 }
             for ub in user_badges
         ]
