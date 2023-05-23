@@ -148,3 +148,144 @@ document.addEventListener('DOMContentLoaded', function() {
 // モーダルウィンドウの表示/非表示は、showModal() および close-modal クリックイベントリスナーによって制御されています。
 // モーダルウィンドウの背景は、modal-bg の要素で、デフォルトでは hidden クラスが適用され、表示されません。showModal() 関数が呼び出されると、hidden クラスが削除され、flex クラスが追加されて表示されるようになります。
 // 逆に、閉じるボタンがクリックされたときには、flex クラスが削除され、hidden クラスが追加されて非表示になります。
+
+//以下にMattermost関連機能追加します。
+
+    const mattermost = document.getElementById("mattermost");    
+    mattermost.addEventListener('click', function() {
+        tokenModal.style.display = "block";
+        // HTMLから要素を取得
+        const registerButton = document.getElementById("registerButton");
+        const tokenInput = document.getElementById("tokenInput");
+        const errorText = document.getElementById("errorText");
+        const cancelButton = document.getElementById("registerCancelButton");
+        // 登録ボタンがクリックされたときのイベントハンドラー
+        registerButton.addEventListener("click", function () {
+            const tokenValue = tokenInput.value.trim(); // 入力値を取得し、前後の空白を削除
+            if (tokenValue === "") { // 入力が空の場合
+                errorText.textContent = "トークンを入力してください";
+            } else { // 入力がある場合
+                errorText.textContent = ""; // エラーメッセージを削除
+            // トークンを保存し、モーダルを閉じるなどの処理をここに書く
+                localStorage.setItem('userToken', tokenValue);
+                tokenModal.style.display = "none";
+                // 登録した際のモーションを出す？
+            }
+        });
+        cancelButton.addEventListener('click', function(){
+            tokenModal.style.display = "none";
+        })
+    })
+
+    const post = document.getElementById("post");
+
+    post.addEventListener('click', function() {
+      let selectElement = document.querySelector("select[name='category']");
+      let category = selectElement.options[selectElement.selectedIndex].text;
+      if (category == 'カテゴリーを選択してください') {
+        category = '';
+      } else {
+        category += 'を';
+      }
+
+      let date = document.getElementById("date").value;
+
+      let timeInput = document.querySelector("input[name='duration']").value;
+      let hours = parseInt(timeInput.split(':')[0]).toString();
+      let minutes = parseInt(timeInput.split(':')[1]).toString();
+
+      if (hours == 0) {
+        hours = '';
+      } else {
+        hours += '時間';
+      }
+
+      if (minutes == 0) {
+        minutes = '';
+      } else {
+        minutes += '分';
+      }
+
+      let memo = document.querySelector("textarea[name='memo']").value;
+
+      // console.log(category, date, hours, memo)
+      let chat = `${date}は${category}${hours}${minutes}頑張ったよ`
+      // console.log(chat);
+      postMattermost(chat, memo);
+    });
+
+  
+
+
+// 投稿機能の関数です postMattermost()を呼び出すときに使います。
+
+function postMattermost(chat, memo) {
+  const mattermostUrl = "http://3.113.16.186:8065";
+  // メッセージを投稿したいチャンネルのID
+  const channelId = "xgmabqyru7n38r8roqqb4iuaua";
+  // ユーザートークンをlocalStorageから取得 もし登録前であれば登録モーダルを表示し、returnします。
+  const userToken = localStorage.getItem('userToken');
+  if (userToken == '' || userToken == null) {
+      tokenModal.style.display = "block";
+      return;
+  }
+  // confirmを使って以下の処理を全て「はい」だった時のみ実施するようにしています。
+  const postConfirm = window.confirm('Mattermostへ投稿します。よろしい？');
+  if (postConfirm) {
+      const memoData = memo ? '\n' + 'memo:' + '\n' + memo : '';
+      // メッセージデータを作成
+      const messageData = {
+          channel_id: channelId,
+           message: 'ーーーーーーーーーーーーーーーーーーーーーーーーー' + '\n' + '[' + chat + ']' + '\n' + memoData
+      };
+
+      // リクエストヘッダを作成
+      const requestOptions = {
+          method: 'POST',
+          headers: {
+          'Authorization': 'Bearer ' + userToken,
+          'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(messageData)
+      };
+
+      // fetch APIを使ってメッセージを投稿
+      const successModal = document.getElementById('successModal');
+      const failModal = document.getElementById('failModal');
+      // fetch APIを使ってメッセージを投稿
+      fetch(mattermostUrl + "/api/v4/posts", requestOptions)
+      .then(response => {
+          if (!response.ok) {
+              // HTTPステータスコードが200番台以外（つまりエラー）だった場合
+              throw new Error('Network response was not ok');
+          }
+          // 成功した場合はresponse.json()を返す
+          return response.json();
+      })
+      .then(data => {
+          console.log(data);
+          // 投稿成功モーダルの表示
+          successModal.style.display = "block";
+      })
+      .catch((error) => {
+          console.error('Error:', error);
+          // 投稿失敗モーダルの表示
+          failModal.style.display = "block";
+      });
+
+      //  htmlから閉じるボタンを取得
+      const closeSuccessModalButton = document.getElementById("closeSuccessModalButton");
+      const closeFailModalButton = document.getElementById("closeFailModalButton");
+
+      // 閉じるボタンに対してモーダル非表示機能を追加
+      closeSuccessModalButton.addEventListener("click", function () {
+          successModal.style.display = "none";
+      });
+
+      closeFailModalButton.addEventListener("click", function () {
+          failModal.style.display = "none";
+      });
+  }
+}
+
+// ここまでが投稿関数です。
