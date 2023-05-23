@@ -53,14 +53,19 @@ bg-snow text-textBlack font-NotoSans
       <div class="absolute inset-0 bg-blackGreen rounded-lg"></div>
       <img src="{% static 'admin/img/calendar-icon.png' %}" alt="calendar icon" class="absolute left-4 top-1/2 transform -translate-y-1/2 h-6 w-6" />
       <input type="date" id="date" name="{{ form.date.name }}" class="block bg-gray-300 w-1/2 translate-x-1/2 translate-y-1/4 pl-16 pr-8 py-2 bg-transparent text-textBlack rounded-lg" value="今日の日付" />
-  </div>
+      <div id="dateErrors" class="text-red-500 error-messages" style="display: none;"></div>
+    </div>
 
   <!-- 時間選択フォーム -->
   <div class="relative mx-auto w-1/2 h-14">
       <div class="absolute inset-0 bg-blackGreen rounded-lg"></div>
       <img src="{% static 'admin/img/clock-icon.png' %}" alt="clock icon" class="absolute left-4 top-1/2 transform -translate-y-1/2 h-6 w-6" />
       <input type="time" id="duration" name="{{ form.duration.name }}" class="block bg-gray-300 w-1/2 translate-x-1/2 translate-y-1/4 pl-16 pr-8 py-2 bg-transparent text-textBlack rounded-lg" value="00:00" />
+      <div id="durationErrors" class="text-red-500 error-messages" style="display: none;"></div>
   </div>
+
+  <!-- エラーメッセージを表示する要素 -->
+<div id="durationErrors" class="text-red-500"></div>
 
   <!-- メモの入力フォーム。小さくなったときのリサイズはまた後日。 -->
   <div class="bg-white w-7/12 mx-auto p-6 rounded shadow relative">
@@ -125,10 +130,10 @@ bg-snow text-textBlack font-NotoSans
 
 
   {# Error messages #}
-  <div id="errorMessages" style="display: none;">
+  {% comment %} <div id="errorMessages" style="display: none;">
     <ul id="errorMessageList">
     </ul>
-  </div>
+  </div> {% endcomment %}
 
 
 <script src="{% static 'admin/js/activity_add.js' %}"></script>
