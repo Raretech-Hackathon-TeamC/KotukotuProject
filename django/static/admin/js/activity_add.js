@@ -24,10 +24,10 @@ async function submitForm() {
   const formData = new FormData(document.querySelector("#activityRecordForm"));
 
     // 必須フィールドのチェック
-  if (!formData.get('date') || !formData.get('duration')) {
-    alert("時間と日付の入力は必須です");
-    return;
-  }
+  // if (!formData.get('date') || !formData.get('duration')) {
+  //   alert("時間と日付の入力は必須です");
+  //   return;
+  // }
 
   // 時間要素から入力された時間を取得し、分単位に変換
   const timeInput = document.querySelector('input[type="time"]');
@@ -65,7 +65,7 @@ async function submitForm() {
   showModal();
   } else {
   // エラーメッセージを表示またはログに記録
-  console.error(data.error);
+  console.error(totalDaysData.error);
   }
   } else {
   // フォーム送信のエラーメッセージを表示
@@ -80,40 +80,32 @@ async function submitForm() {
 
 // エラーメッセージを表示する関数
 function displayErrors(errors) {
- // エラーメッセージリストの要素を取得
- const errorMessageList = document.getElementById("errorMessageList");
- errorMessageList.innerHTML = "";
+  // エラーメッセージを表示する要素を取得
+  const dateErrors = document.getElementById("dateErrors");
+  const durationErrors = document.getElementById("durationErrors");
 
- // エラーメッセージをリストに追加
- for (const key in errors) {
-  if (Object.prototype.hasOwnProperty.call(errors, key)) {
-   const li = document.createElement("li");
-   li.textContent = errors[key];
-   errorMessageList.appendChild(li);
+  // エラーメッセージをクリア
+  dateErrors.innerHTML = "";
+  durationErrors.innerHTML = "";
+
+  // エラーメッセージを表示
+  for (const key in errors) {
+    if (Object.prototype.hasOwnProperty.call(errors, key)) {
+      const p = document.createElement("p");
+      const errorMsg = document.createTextNode(errors[key]);
+      p.style.marginTop = "0.8em"; // 上部のマージンを調整
+
+      p.appendChild(errorMsg);
+
+      if (key === "date") {
+        dateErrors.appendChild(p);
+        dateErrors.style.display = "block";
+      } else if (key === "duration") {
+        durationErrors.appendChild(p);
+        durationErrors.style.display = "block";
+      }
+    }
   }
- }
-
- // エラーメッセージを表示
- document.getElementById("errorMessages").style.display = "block";
-}
-
-// エラーメッセージを表示する関数
-function displayErrors(errors) {
- // エラーメッセージリストの要素を取得
- const errorMessageList = document.getElementById("errorMessageList");
- errorMessageList.innerHTML = "";
-
- // エラーメッセージをリストに追加
- for (const key in errors) {
-  if (Object.prototype.hasOwnProperty.call(errors, key)) {
-   const li = document.createElement("li");
-   li.textContent = errors[key];
-   errorMessageList.appendChild(li);
-  }
- }
-
- // エラーメッセージを表示
- document.getElementById("errorMessages").style.display = "block";
 }
 
 // ホームボタンのイベントリスナー
