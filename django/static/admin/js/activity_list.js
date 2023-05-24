@@ -39,7 +39,18 @@ function createChatItem(record) {
  chatItem.classList.add("chat-bubble");
  chatItem.style.backgroundColor = record.category_color; // チャットの色を設定
 
-  const chatText = document.createTextNode(`${record.date}は${record.duration}時間頑張ったよ`);
+ const date = new Date(record.date);
+ const formattedDate = `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}`;
+ let formattedDuration = '';
+  const duration = record.duration.split(":").map(value => parseInt(value));
+  if (duration[0] > 0) {
+    formattedDuration += `${duration[0]}時間`;
+  }
+  if (duration[1] > 0 || duration[0] === 0) {
+    formattedDuration += `${duration[1]}分`;
+  }
+
+  const chatText = document.createTextNode(`${formattedDate}は${formattedDuration}頑張ったよ`);
   chatItem.appendChild(chatText);
 
   if (record.memo.length >= 0) {
