@@ -199,11 +199,16 @@ class ActivityListAjaxView(LoginRequiredMixin, generic.View):
             else:
                 category_color = ''
 
+            # 時間のフォーマットを変更
+            hours = int(activity.duration / 60)
+            minutes = int(activity.duration % 60)
+            duration = f'{hours:02}:{minutes:02}'
+
             # 各アクティビティのデータをリストに追加
             activities_data.append({
                 'id': activity.pk,
-                'date': activity.date.strftime('%Y-%m-%d'),
-                'duration': round(activity.duration / 60, 1),
+                'date': activity.date.strftime('%Y/%m/%-d'),
+                'duration': duration,
                 'memo': activity.memo,
                 'category_color': category_color,
             })
