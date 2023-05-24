@@ -50,16 +50,3 @@ class UserLoginForm(AuthenticationForm):
     error_messages = {
         'invalid_login': "メールアドレスまたはパスワードが正しくありません。",
     }
-
-    def clean(self):
-        cleaned_data = super().clean()
-        username = cleaned_data.get('username')
-        password = cleaned_data.get('password')
-
-        if username and password:
-            # ユーザー認証を行う
-            user = authenticate(username=username, password=password)
-            if user is None:
-                self.add_error(None, self.error_messages['invalid_login'])
-
-        return cleaned_data
