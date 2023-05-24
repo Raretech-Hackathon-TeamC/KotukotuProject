@@ -10,6 +10,7 @@ from datetime import timedelta, datetime
 from activity.models import ActivityRecord
 from django.db.models import Sum, Value
 from django.db.models.functions import Coalesce
+from decimal import Decimal
 
 # Categoryの情報をJSON形式で返すView
 class CategoryHomeAjaxView(generic.View):
@@ -79,7 +80,8 @@ class CategoryDetailAjaxView(generic.DetailView):
         duration_list = []
         for date in dates:
             duration = activity_duration_dict.get(date, 0)
-            duration_list.append(duration)
+            duration_hours = Decimal(duration) / 60  # 分から0.0時間の単位に変換
+            duration_list.append(round(float(duration_hours), 1))  # 小数点第1位までに丸める
         category_data['duration_list'] = duration_list
 
         # カテゴリーの累計時間を計算
