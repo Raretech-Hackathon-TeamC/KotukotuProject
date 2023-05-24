@@ -37,10 +37,12 @@
    <form method="POST">
     {% csrf_token %}
 
-    <!-- エラーメッセージの表示。-->
-    {% if form.is_bound %} {% if form.username.errors or form.password.errors %}
-    <div class="text-red-500 mb-4">メールアドレスまたはパスワードが正しくありません。</div>
-    {% endif %} {% endif %}
+    <!-- エラーメッセージの表示 -->
+    <div class="text-red-500 mb-4">
+      {% for error in form.non_field_errors %}
+        {{ error|escape }}
+      {% endfor %}
+    </div>
 
     <!-- メールアドレスの入力フィールド -->
     <div class="mb-4">
@@ -54,6 +56,12 @@
       class="mt-1 w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500"
       value="{{ form.username.value|default:'' }}"
      />
+     <!-- エラーメッセージの表示 -->
+     {% for error in form.username.errors %}
+      <div class="text-red-500 mb-4">
+        {{ error|escape }}
+      </div>
+     {% endfor %}
     </div>
 
     <!-- パスワードの入力フィールド -->
