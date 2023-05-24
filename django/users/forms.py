@@ -2,6 +2,9 @@ from django import forms
 from users.models import User
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import authenticate
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
 
 # ユーザー登録用
 class RegistForm(forms.ModelForm):
@@ -44,3 +47,19 @@ class RegistForm(forms.ModelForm):
 class UserLoginForm(AuthenticationForm):
     username = forms.EmailField(label='メールアドレス')
     password = forms.CharField(label='パスワード', widget=forms.PasswordInput())
+    error_messages = {
+        'invalid_login': "メールアドレスまたはパスワードが正しくありません。",
+    }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        username = cleaned_data.get('username')
+        password = cleaned_data.get('password')
+
+        if username and password:
+            # ユーザー認証を行う
+            user = authenticate(username=username, password=password)
+            if user is None:
+                self.add_error(None, self.error_messages['invalid_login'])
+
+        return cleaned_data
