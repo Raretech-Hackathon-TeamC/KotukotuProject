@@ -22,18 +22,18 @@ class Badge(models.Model):
         ('total_activities', '累計積み上げ数'),
     ]
     COMPARATORS = [
-        ('<', 'より大きい'),
-        ('>', 'より小さい'),
-        ('=', '等しい'),
-        ('<=', '以上'),
-        ('>=', '以下'),
+        ('<', 'より小さい'),
+        ('>', 'より大きい'),
+        ('==', '等しい'),
+        ('<=', '以下'),
+        ('>=', '以上'),
     ]
     name = models.CharField(max_length=255, null=False, blank=False)
     description = models.TextField(null=False, blank=False)
     badge_type = models.CharField(max_length=255, choices=BadgeType.BADGE_TYPES, null=False, blank=False)
     condition_type = models.CharField(max_length=255, choices=CONDITION_TYPES, null=False, blank=False)
     condition_value = models.IntegerField(null=False, blank=False)
-    comparator = models.CharField(max_length=2, choices=COMPARATORS, default='<=',null=False, blank=False)
+    comparator = models.CharField(max_length=2, choices=COMPARATORS, default='>=',null=False, blank=False)
     is_available = models.BooleanField(default=True)
 
     def __str__(self):

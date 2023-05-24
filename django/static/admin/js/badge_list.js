@@ -18,7 +18,7 @@ function static(path) {
    // データが存在しない場合のメッセージを表示
    if (data.length === 0) {
     const emptyMessage = document.createElement("p");
-    emptyMessage.textContent = "バッジがありません";
+    emptyMessage.textContent = "実績がありません";
     badgeList.appendChild(emptyMessage);
   } else {
     // データが存在する場合、それぞれのデータに対してチャットアイテムを作成し、追加する
@@ -41,13 +41,14 @@ function static(path) {
   if (badge.is_unlocked) {
     chatItem.style.backgroundColor = badge.color_code; // チャットの色を設定
 
-    const chatText = document.createTextNode(`${badge.date_unlocked}に${badge.badge_name}を獲得しました！`);
+    const chatText = document.createElement("span");
+    chatText.innerHTML = `実績:【${badge.badge_name}】を解除しました！<br>解除条件:${badge.badge_description}<br>解除日:${badge.date_unlocked}`;
     chatItem.appendChild(chatText);
   } else {
     chatItem.style.backgroundColor = "#A6A6A6"; // グレーの背景色
 
     const chatText = document.createElement("span");
-    chatText.innerHTML = `${badge.badge_name}は未獲得です。<br>獲得条件は${badge.badge_description}です。`;
+    chatText.innerHTML = `実績:【${badge.badge_name}】は未解除です。<br>解除条件:${badge.badge_description}`;
     chatItem.appendChild(chatText);
   }
 
