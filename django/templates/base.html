@@ -26,6 +26,10 @@
       rel="stylesheet"
     />
 
+    {% comment %} ファビコンの設定 {% endcomment %}
+    <link rel="icon" type="image/png" href="{% static 'admin/img/kotukotu_thumbnail.png' %}" />
+
+
     {% comment %} cdnで色をカスタムできないからhtmlのスタイルで当てる。importは最後の手段らしい。 {% endcomment %}
     <style>
         :root {
@@ -106,16 +110,16 @@
        <a href="{% url 'activity:home' %}" class="hover:underline">ホーム</a>
       </li>
       <li>
-       <a href="{% url 'activity:activity_list' %}" class="hover:underline">一覧</a>
+       <a href="{% url 'activity:activity_list' %}" class="hover:underline">積上一覧</a>
       </li>
       <li>
-       <a href="{% url 'activity:activity_add' %}" class="hover:underline">記録</a>
+       <a href="{% url 'activity:activity_add' %}" class="hover:underline">積上記録</a>
       </li>
       <li>
        <a href="{% url 'categories:category_add' %}" class="hover:underline">カテゴリー追加</a>
       </li>
       <li>
-       <a href="{% url 'badges:badge_list' %}" class="hover:underline">実績</a>
+       <a href="{% url 'badges:badge_list' %}" class="hover:underline">実績一覧</a>
       </li>
      </ul>
      <button
@@ -161,14 +165,17 @@
      <a href="{% url 'activity:home' %}" class="hover:underline">ホーム</a>
     </li>
     <li>
-     <a href="{% url 'activity:activity_list' %}" class="hover:underline">アクティビティ</a>
+     <a href="{% url 'activity:activity_list' %}" class="hover:underline">積上一覧</a>
     </li>
     <li>
-     <a href="{% url 'activity:activity_add' %}" class="hover:underline">記録画面</a>
+     <a href="{% url 'activity:activity_add' %}" class="hover:underline">積上記録</a>
     </li>
     <li>
      <a href="{% url 'categories:category_add' %}" class="hover:underline">カテゴリー追加</a>
     </li>
+    <li>
+      <a href="{% url 'badges:badge_list' %}" class="hover:underline">実績一覧</a>
+     </li>
     <li>
      <button
       type="submit"
