@@ -31,19 +31,19 @@ bg-snow text-textBlack font-NotoSans
   <form id="categoryAddForm" method="POST" class="grid grid-cols-1 gap-6 max-w-screen-xl mx-auto activityRecordForm">
     {% csrf_token %}
    <!-- カテゴリーネーム作成 -->
-   <div class="mx-auto w-full md:w-3/4 py-2 bg-blackGreen text-textBlack rounded-lg flex items-center justify-center">
+   <div class="mx-auto w-full h-12 md:w-3/4 py-2 bg-blackGreen text-textBlack rounded-lg flex items-center justify-center">
      {{ form.name.label_tag }}
      {{ form.name }}
    </div>
 
    <!-- 目標の作成 -->
-   <div class="mx-auto w-full md:w-3/4 py-2 bg-blackGreen text-textBlack rounded-lg flex items-center justify-center">
+   <div class="mx-auto w-full h-12 md:w-3/4 py-2 bg-blackGreen text-textBlack rounded-lg flex items-center justify-center">
      {{ form.goal.label_tag }}
      {{ form.goal }}
    </div>
 
    <!-- カラーの選択 -->
-   <div class="mx-auto w-full md:w-3/4 py-2 bg-blackGreen text-textBlack rounded-lg flex items-center justify-center">
+   <div class="mx-auto w-full h-12 md:w-3/4 py-2 bg-blackGreen text-textBlack rounded-lg flex items-center justify-center">
      {{ form.color_code.label_tag }}
      {{ form.color_code }}
    </div>
@@ -63,7 +63,7 @@ bg-snow text-textBlack font-NotoSans
 
 
     <div class="flex justify-center mt-6">
-      <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-500">編集完了</button>
+      <button type="submit" class="px-4 py-2 btn-blackGreen hover:bg-whiteGreen text-white rounded">編集完了</button>
       <a href="{% url 'activity:home' %}" class="ml-3 px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-300">戻る</a>
     </div>
   </form>
@@ -128,6 +128,17 @@ bg-snow text-textBlack font-NotoSans
     });
   });
  </script>
+
+ {% comment %} 入力フォームに丸みを帯びさせる {% endcomment %}
+<script>
+  window.onload = function() {
+      var inputs = document.getElementsByTagName('input');
+      for(var i = 0; i < inputs.length; i++) {
+          inputs[i].style.borderRadius = '10px';
+          inputs[i].style.marginLeft = '10px';
+      }
+  }
+  </script>
  
 {% comment %} クリップボード保存機能を持たせている。 {% endcomment %}
 <script src="{% static 'admin/js/category_add.js' %}"></script>
