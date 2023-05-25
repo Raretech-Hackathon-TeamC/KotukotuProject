@@ -1,21 +1,21 @@
 // テスト用のカテゴリデータの配列を定義
-const categories = [
- {
-  categoryColor: "#DABEB7",
-  categoryName: "プログラミング",
-  categoryDuration: "00:30"
- },
- {
-  categoryColor: "#B7C1DA",
-  categoryName: "タイピング",
-  categoryDuration: "01:15"
- },
- {
-  categoryColor: "#DAD4B7",
-  categoryName: "英語",
-  categoryDuration: "00:45"
- }
-];
+// const categories = [
+//  {
+//   categoryColor: "#DABEB7",
+//   categoryName: "プログラミング",
+//   categoryDuration: "00:30"
+//  },
+//  {
+//   categoryColor: "#B7C1DA",
+//   categoryName: "タイピング",
+//   categoryDuration: "01:15"
+//  },
+//  {
+//   categoryColor: "#DAD4B7",
+//   categoryName: "英語",
+//   categoryDuration: "00:45"
+//  }
+// ];
 
 // HTMLのid属性が"category-list"の要素を取得
 const categoryList = document.getElementById("category-list");
