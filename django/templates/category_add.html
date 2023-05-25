@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
-{% block body_class %} 
-bg-snow text-textBlack font-NotoSans 
+{% block body_class %}
+bg-snow text-textBlack font-NotoSans
 {% endblock body_class %}
 
 {% block title %}
@@ -26,7 +26,7 @@ bg-snow text-textBlack font-NotoSans
   カテゴリーを追加する
  </h1>
  <hr class="mx-10 my-4 border-2 border-blackGreen shadow-md z-20" />
- 
+
  <div class="container mx-auto px-4 py-10 z-30">
   <form id="categoryAddForm" method="POST" class="grid grid-cols-1 gap-6 max-w-screen-xl mx-auto activityRecordForm">
     {% csrf_token %}
@@ -34,12 +34,26 @@ bg-snow text-textBlack font-NotoSans
    <div class="mx-auto w-full md:w-3/4 py-2 bg-blackGreen text-textBlack rounded-lg flex items-center justify-center">
      {{ form.name.label_tag }}
      {{ form.name }}
+    {% if form.name.errors %}
+      <div class="text-red-500">
+        {% for error in form.name.errors %}
+          {{ error }}
+        {% endfor %}
+      </div>
+    {% endif %}
    </div>
 
    <!-- 目標の作成 -->
    <div class="mx-auto w-full md:w-3/4 py-2 bg-blackGreen text-textBlack rounded-lg flex items-center justify-center">
      {{ form.goal.label_tag }}
      {{ form.goal }}
+    {% if form.goal.errors %}
+      <div class="text-red-500">
+        {% for error in form.goal.errors %}
+          {{ error }}
+        {% endfor %}
+      </div>
+    {% endif %}
    </div>
 
    <!-- カラーの選択 -->
@@ -58,13 +72,20 @@ bg-snow text-textBlack font-NotoSans
     <div style="display: none;">
       {{ form.color_code.label_tag }}
       {{ form.color_code }}
+      {% if form.color_code.errors %}
+        <div class="text-red-500">
+          {% for error in form.color_code.errors %}
+            {{ error }}
+          {% endfor %}
+        </div>
+      {% endif %}
     </div>
-  </div>  
-  
+  </div>
+
 
     <!-- <div class="color-sample" style="display: flex; align-items: center; margin-left: 10px;">
       <div id="color-circle" style="width: 100px; height: 20px; border-radius: 10px; margin-right: 5px;"></div>
-    </div>    
+    </div>
   </div> -->
 
 
