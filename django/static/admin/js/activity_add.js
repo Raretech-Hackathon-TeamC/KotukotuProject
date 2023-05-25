@@ -1,16 +1,16 @@
 // 先にフロントで定義した関数。
 // モーダルの表示を制御する関数
 function showModal() {
- const modalBg = document.getElementById("modal-bg");
- modalBg.classList.remove("hidden");
- modalBg.classList.add("flex");
+  const modalBg = document.getElementById("modal-bg");
+  modalBg.classList.remove("hidden");
+  modalBg.classList.add("flex");
 }
 
 // 閉じるボタンをクリックした際のイベントリスナー
 document.getElementById("close-modal").addEventListener("click", function () {
- const modalBg = document.getElementById("modal-bg");
- modalBg.classList.remove("flex");
- modalBg.classList.add("hidden");
+  const modalBg = document.getElementById("modal-bg");
+  modalBg.classList.remove("flex");
+  modalBg.classList.add("hidden");
 });
 
 // フォームの送信後、エラーもしくは、データを取得してからモーダル出力する流れ。（バックエンドで記載していたもの）
@@ -20,31 +20,34 @@ async function submitForm() {
   // const submitButton = document.getElementById("recordSubmit");
   // console.log(submitButton);
   // submitButton.disabled = true;
+
+  // クリック可能な状態かどうかをチェック
+  const submitButton = document.getElementById("recordSubmit");
+  if (submitButton.disabled) {
+    return; // クリック不可の場合は処理を中断
+  }
+
+  // クリック不可に設定
+  submitButton.disabled = true;
   // フォームデータを取得
   const formData = new FormData(document.querySelector("#activityRecordForm"));
 
-    // 必須フィールドのチェック
-  // if (!formData.get('date') || !formData.get('duration')) {
-  //   alert("時間と日付の入力は必須です");
-  //   return;
-  // }
-
   // 時間要素から入力された時間を取得し、分単位に変換
   const timeInput = document.querySelector('input[type="time"]');
-  const [hours, minutes] = timeInput.value.split(':').map(Number);
+  const [hours, minutes] = timeInput.value.split(":").map(Number);
   const durationInMinutes = hours * 60 + minutes;
 
   // 分単位のデータをフォームデータに追加
-  formData.set('duration', durationInMinutes);
+  formData.set("duration", durationInMinutes);
 
   // フォームデータを送信
   const csrf_token = document.querySelector("[name=csrfmiddlewaretoken]").value;
-  const response = await fetch('/activity/add/', {
+  const response = await fetch("/activity/add/", {
     method: "POST",
     body: formData,
     headers: {
-    "X-CSRFToken": csrf_token
-    }
+      "X-CSRFToken": csrf_token,
+    },
   });
 
   // Jsonデータを取得
@@ -52,30 +55,36 @@ async function submitForm() {
 
   // 送信が成功した場合『ここからモーダルの要素、合わせる部分』
   if (data.success) {
-  // 累計日数を取得
-  const totalDaysResponse = await fetch('/activity/get_total_days/');
-  const totalDaysData = await totalDaysResponse.json();
+    // 累計日数を取得
+    const totalDaysResponse = await fetch("/activity/get_total_days/");
+    const totalDaysData = await totalDaysResponse.json();
 
-  // 累計日数取得に成功した場合
-  if (totalDaysResponse.ok) {
-  // 累計日数を表示
-  document.getElementById("totalDays").textContent = totalDaysData.total_days;
+    // 累計日数取得に成功した場合
+    if (totalDaysResponse.ok) {
+      // 累計日数を表示
+      document.getElementById("totalDays").textContent =
+        totalDaysData.total_days;
 
-  // モーダルを表示
-  showModal();
+      // モーダルを表示
+      showModal();
+
+      // クリック可能に戻す
+      submitButton.disabled = false;
+    } else {
+      // エラーメッセージを表示またはログに記録
+      console.error(totalDaysData.error);
+    }
   } else {
-  // エラーメッセージを表示またはログに記録
-  console.error(totalDaysData.error);
-  }
-  } else {
-  // フォーム送信のエラーメッセージを表示
-  displayErrors(data.errors);
+    // フォーム送信のエラーメッセージを表示
+    displayErrors(data.errors);
+    // クリック可能に戻す（エラーの場合もクリック可能にする）
+    submitButton.disabled = false;
   }
   /// ×ボタンをクリックした際のリダイレクト処理
-  document.getElementById("close-modal").addEventListener("click", function() {
+  document.getElementById("close-modal").addEventListener("click", function () {
     // activity_add画面にリダイレクト
     window.location.href = "/activity/add/";
-    });
+  });
 }
 
 // エラーメッセージを表示する関数
@@ -110,29 +119,29 @@ function displayErrors(errors) {
 
 // ホームボタンのイベントリスナー
 document.getElementById("homeButton").addEventListener("click", function () {
- // ホーム画面への遷移
- location.href = '/activity/';
+  // ホーム画面への遷移
+  location.href = "/activity/";
 });
 
 // レコードボタンのイベントリスナー
 document.getElementById("recordButton").addEventListener("click", function () {
- // レコード画面への遷移
- location.href = '/activity/list/';
+  // レコード画面への遷移
+  location.href = "/activity/list/";
 });
 
 // DOMContentLoadedイベントを待ってから、処理を実行する
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener("DOMContentLoaded", function () {
   // /quotes/random/ へのGETリクエストを送信する
-  fetch('/quotes/random/')
+  fetch("/quotes/random/")
     // レスポンスをJSON形式で解析する
-    .then(response => response.json())
+    .then((response) => response.json())
     // JSONデータから引用を抽出し、HTML要素にセットする
-    .then(data => {
+    .then((data) => {
       var quote = data.quote;
       document.querySelector("#quote").textContent = quote;
     })
     // エラーが発生した場合には、コンソールにエラーメッセージを表示する
-    .catch(error => console.error(error));
+    .catch((error) => console.error(error));
 });
 
 // カレンダーの表示を今日に設定
