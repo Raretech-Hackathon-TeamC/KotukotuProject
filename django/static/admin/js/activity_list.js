@@ -4,6 +4,20 @@ function static(path) {
  return staticRoot + path;
 }
 
+// ウィンドウの幅に応じて改行文字数を変更する関数
+function getMaxCharPerLine() {
+ const width = window.innerWidth;
+
+ // 幅に応じて改行文字数を変更
+ if (width <= 480) {
+  return 20; // スマートフォン等、小さな画面
+ } else if (width <= 1024) {
+  return 30; // タブレットサイズ
+ } else {
+  return 60; // デスクトップ等、大きな画面
+ }
+}
+
 // アクティビティレコードを取得する非同期関数
 async function fetchActivityRecords() {
  try {
@@ -41,37 +55,47 @@ function createChatItem(record) {
 
  const date = new Date(record.date);
  const formattedDate = `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}`;
- let formattedDuration = '';
-  const duration = record.duration.split(":").map(value => parseInt(value));
-  if (duration[0] > 0) {
-    formattedDuration += `${duration[0]}時間`;
+ let formattedDuration = "";
+ const duration = record.duration.split(":").map(value => parseInt(value));
+ if (duration[0] > 0) {
+  formattedDuration += `${duration[0]}時間`;
+ }
+ if (duration[1] > 0 || duration[0] === 0) {
+  formattedDuration += `${duration[1]}分`;
+ }
+
+ //  折り返し表示のために追記
+ const textContainer = document.createElement("div");
+ textContainer.classList.add("text-container");
+
+ const chatText = document.createTextNode(`${formattedDate}は${formattedDuration}頑張ったよ`);
+
+ // 上の文言とメモを縦に並べるラッパーを作成した。
+ const textWrapper = document.createElement("div");
+ textWrapper.style.display = "flex";
+ textWrapper.style.flexDirection = "column";
+ textWrapper.appendChild(chatText);
+
+ // テキストノードの作成
+ if (record.memo.length > 0) {
+  let lines = Math.ceil(record.memo.length / getMaxCharPerLine());
+  for (let i = 0; i < lines; i++) {
+   let span = document.createElement("span");
+   span.textContent = record.memo.slice(i * getMaxCharPerLine(), (i + 1) * getMaxCharPerLine());
+   textWrapper.appendChild(span);
+   if (i < lines - 1) {
+    let br = document.createElement("br");
+    textWrapper.appendChild(br);
+   }
   }
-  if (duration[1] > 0 || duration[0] === 0) {
-    formattedDuration += `${duration[1]}分`;
-  }
+ } else {
+  const memoNode = document.createTextNode(" ");
+  textWrapper.appendChild(memoNode);
+ }
 
-  const chatText = document.createTextNode(`${formattedDate}は${formattedDuration}頑張ったよ`);
-  chatItem.appendChild(chatText);
+ chatItem.appendChild(textWrapper);
 
-  if (record.memo.length >= 0) {
-    // テキストノードの作成
-    const breakNode = document.createElement("br");
-    const memoNode = document.createTextNode(` ${record.memo}`);
-
-    // チャットアイテムにノードを追加
-    chatItem.appendChild(breakNode);
-    chatItem.appendChild(memoNode);
-  } else {
-    const memoNode = document.createTextNode(` ${record.memo}`);
-    chatItem.appendChild(memoNode);
-  }
-
- // メモのテキストを作成し、アイテムに追加
-//  const memoText = document.createElement("p");
-//  memoText.textContent = record.memo;
-//  chatItem.appendChild(memoText);
-
- //  亀の画像
+ // 亀の画像
  const chatImage = document.createElement("img");
  const kotukotuThumbnailPath = static("admin/img/kotukotu_thumbnail.png");
  chatImage.src = kotukotuThumbnailPath;
@@ -82,7 +106,7 @@ function createChatItem(record) {
  // 編集ボタンの枠
  const chatIcon = document.createElement("div");
  chatIcon.classList.add("chat-icon");
- 
+
  // 枠の中にiconを挿入
  const iconImage = document.createElement("img");
  iconImage.src = static("admin/img/icon_activity_edit.svg");
@@ -93,12 +117,12 @@ function createChatItem(record) {
  chatItem.appendChild(chatIcon);
 
  // 編集ボタンの遷移先url
- chatIcon.addEventListener("click", function() {
+ chatIcon.addEventListener("click", function () {
   // 画面遷移の処理を実装する
   const activityId = record.id; // アクティビティのIDを取得する方法に合わせて記述
   const url = `/activity/${activityId}/edit/`;
   window.location.href = url;
-});
+ });
 
  // ゴミ箱ボタン。押したらモーダルを動かす。
  const trashButton = document.createElement("button");
@@ -114,12 +138,12 @@ function createChatItem(record) {
  trashButton.appendChild(trashIcon);
  chatItem.appendChild(trashButton);
 
- //  htmlのモーダルから要素を取得
+ // htmlのモーダルから要素を取得
  const deleteModal = document.getElementById("deleteModal");
  const deleteForm = document.getElementById("deleteForm");
  const cancelButton = document.getElementById("cancelButton");
 
- //  jsで作成したtrashボタンに対してモーダル表示機能を追加。
+ // jsで作成したtrashボタンに対してモーダル表示機能を追加。
  trashButton.addEventListener("click", function (event) {
   event.preventDefault();
   // ここで削除するアクティビティのIDをフォームのアクションにセット
@@ -127,7 +151,7 @@ function createChatItem(record) {
   deleteModal.style.display = "block";
  });
 
- //  htmlから取得したキャンセルボタンに対してモーダル非表示機能を追加。
+ // htmlから取得したキャンセルボタンに対してモーダル非表示機能を追加。
  cancelButton.addEventListener("click", function () {
   deleteModal.style.display = "none";
  });
@@ -137,3 +161,15 @@ function createChatItem(record) {
 
 // 非同期関数を呼び出す
 fetchActivityRecords();
+
+// ウィンドウサイズが変更されたときに、チャットアイテムを再描画する
+window.addEventListener("resize", function () {
+ // 既存のチャットアイテムをすべて削除
+ const container = document.getElementById("chat-container");
+ while (container.firstChild) {
+  container.removeChild(container.firstChild);
+ }
+
+ // チャットアイテムを再描画
+ fetchActivityRecords();
+});
