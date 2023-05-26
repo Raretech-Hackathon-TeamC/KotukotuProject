@@ -49,7 +49,7 @@ function static(path) {
     chatItem.style.color = "white"; // 文字色を白に設定
 
     const chatText = document.createElement("span");
-    chatText.innerHTML = `実績:【${badge.badge_name}】は未解除です。<br>解除条件:${badge.badge_description}`;
+    chatText.innerHTML = `実績:【${badge.badge_name}】は未解除です。<br>解除条件:${badge.badge_description}<br>解除まで残り:${badge.countdown_text}`;
     chatItem.appendChild(chatText);
 
   }
