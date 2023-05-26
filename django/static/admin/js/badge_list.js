@@ -45,20 +45,42 @@ function static(path) {
     chatText.innerHTML = `実績:【${badge.badge_name}】を解除しました！<br>解除条件:${badge.badge_description}<br>解除日:${badge.date_unlocked}`;
     chatItem.appendChild(chatText);
   } else {
-    chatItem.style.backgroundColor = "#A6A6A6"; // グレーの背景色
+    chatItem.style.backgroundColor = "#666c67"; // グレーの背景色
+    chatItem.style.color = "white"; // 文字色を白に設定
 
     const chatText = document.createElement("span");
-    chatText.innerHTML = `実績:【${badge.badge_name}】は未解除です。<br>解除条件:${badge.badge_description}`;
+    chatText.innerHTML = `実績:【${badge.badge_name}】は未解除です。<br>解除条件:${badge.badge_description}<br>解除まで残り:${badge.countdown_text}`;
     chatItem.appendChild(chatText);
+
   }
 
-  //  亀の画像
-  const chatImage = document.createElement("img");
-  const kotukotuThumbnailPath = static("admin/img/kotukotu_thumbnail.png");
-  chatImage.src = kotukotuThumbnailPath;
-  chatImage.alt = "サムネイルのカメの画像";
-  chatImage.classList.add("chat-image");
-  chatItem.appendChild(chatImage);
+// 画像の条件に応じてチャットアイテムに画像を追加
+const chatImage = document.createElement("img");
+chatImage.alt = "アイコンの画像";
+chatImage.classList.add("chat-image");
+
+// badge_typeに応じて画像パスを設定
+switch (badge.badge_type) {
+  case "bronze":
+    chatImage.src = static("admin/img/icon-bronze.png");
+    break;
+  case "silver":
+    chatImage.src = static("admin/img/icon-silver.png");
+    break;
+  case "gold":
+    chatImage.src = static("admin/img/icon-gold.png");
+    break;
+  case "platinum":
+    chatImage.src = static("admin/img/icon-platinum.png");
+    break;
+  case "diamond":
+    chatImage.src = static("admin/img/icon-diamond.png");
+    break;
+  default:
+    chatImage.src = static("admin/img/kotukotu_thumbnail.png");
+}
+
+chatItem.appendChild(chatImage);
 
   return chatItem;
  }

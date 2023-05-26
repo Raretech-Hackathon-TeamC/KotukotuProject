@@ -125,11 +125,17 @@ def check_duplicate_add(request):
         return JsonResponse({"error": "Invalid request method"})
 
 # カテゴリー復元
-def category_restore(request, pk):
-    category = Category.objects.get(pk=pk, user=request.user)
+def category_restore(request, category_name):
+    # 最新の削除カテゴリーを取得
+    category = Category.objects.filter(user=request.user, name=category_name, is_deleted=True).order_by('-updated_at').first()
+    if category is None:
+        return JsonResponse({"error": "Deleted category not found"})
+
+    # カテゴリーを復元
     category.is_deleted = False
     category.save()
     return HttpResponseRedirect(reverse_lazy('activity:home'))
+
 
 # カテゴリー編集
 class CategoryEditView(LoginRequiredMixin, generic.UpdateView):

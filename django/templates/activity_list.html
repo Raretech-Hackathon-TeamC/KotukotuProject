@@ -5,7 +5,7 @@ bg-snow text-textBlack font-NotoSans
 {% endblock body_class %}
 
 {% block title %}
-<title>アクティビティリスト</title>
+<title>積み上げ一覧</title>
 {% endblock %}
 
 {% comment %} activity_list.js(レコード一覧チャット）に当てはめるためのcss {% endcomment %}
@@ -36,6 +36,11 @@ bg-snow text-textBlack font-NotoSans
     gap: 10px; /* アイテム間のスペースを調整する */
   }
 
+  .text-container {
+    max-width: 80%;  
+    white-space: normal;
+  }
+  
   .chat-bubble:before {
     content: "";
     position: absolute;
@@ -61,8 +66,10 @@ bg-snow text-textBlack font-NotoSans
   }
 
   .trash-icon {
-    width: 20px;
-    height: 20px;
+    width: 20px !important;
+    height: 20px !important;
+    min-width: 10px !important;
+    min-height: 10px !important;
   }
 
   .chat-icon {
