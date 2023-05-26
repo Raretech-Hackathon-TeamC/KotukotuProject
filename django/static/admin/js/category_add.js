@@ -35,3 +35,25 @@ function handleButtonClick(event) {
     // クリックしたボタンにボーダーを追加
     event.target.style.border = '5px solid white';
   }
+
+  // 色をもう一度押すと白枠が消える　要らなさそうなのでコメントアウトして一応残します。5/25
+
+  // function handleButtonClick(event) {
+  //   // すべてのボタンからボーダーを削除
+  //   let buttons = document.querySelectorAll('.color-button');
+  //   // 既にボーダーがあるかを判定する
+  //   let isBorder = false;
+  //   if (event.target.style.border) {
+  //     isBorder = true;
+  //   }
+  //   for (let i = 0; i < buttons.length; i++) {
+  //     buttons[i].style.border = '';
+  //   }
+       // ボーダーがあれば解除、なければ指定
+  //   if (isBorder) {
+  //     event.target.style.border = '';
+  //   } else {
+  //     // クリックしたボタンにボーダーを追加
+  //     event.target.style.border = '5px solid white';
+  //   }
+  // }
