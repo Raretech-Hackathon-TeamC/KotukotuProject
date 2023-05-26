@@ -60,6 +60,11 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'kotukotupj.urls'
 
+CSRF_TRUSTED_ORIGINS = [
+    '.kotukotu-rare.com',
+]
+
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
