@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
-{% block body_class %} 
-bg-snow text-textBlack font-NotoSans 
+{% block body_class %}
+bg-snow text-textBlack font-NotoSans
 {% endblock body_class %}
 
 {% block title %}
@@ -26,7 +26,7 @@ bg-snow text-textBlack font-NotoSans
   カテゴリー追加
  </h1>
  <hr class="mx-10 my-4 border-2 border-blackGreen shadow-md z-20" />
- 
+
  <div class="container mx-auto px-4 py-10 z-30">
   <form id="categoryAddForm" method="POST" class="grid grid-cols-1 gap-6 max-w-screen-xl mx-auto activityRecordForm">
     {% csrf_token %}
@@ -59,12 +59,12 @@ bg-snow text-textBlack font-NotoSans
       {{ form.color_code.label_tag }}
       {{ form.color_code }}
     </div>
-  </div>  
-  
+  </div>
+
 
     <!-- <div class="color-sample" style="display: flex; align-items: center; margin-left: 10px;">
       <div id="color-circle" style="width: 100px; height: 20px; border-radius: 10px; margin-right: 5px;"></div>
-    </div>    
+    </div>
   </div> -->
 
 
@@ -144,7 +144,9 @@ bg-snow text-textBlack font-NotoSans
       document.getElementById("restoreContainer").style.display = "block";
       let categoryId = data.category_id;
       document.getElementById("restoreCategory").onclick = function () {
-       location.href = "{% url 'categories:category_restore' 0 %}".replace("0", categoryId);
+          // URL encoding the category name to handle special characters
+          let encodedCategoryName = encodeURIComponent(categoryName);
+          location.href = "{% url 'categories:category_restore' 'dummy' %}".replace("dummy", encodedCategoryName);
       };
       document.getElementById("createNewCategory").onclick = function () {
        event.target.submit();
