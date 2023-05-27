@@ -206,7 +206,7 @@ post.addEventListener('click', function() {
 // 投稿機能の関数です postMattermost()を呼び出すときに使います。
 
 function postMattermost(chat, memo) {
-const mattermostUrl = "http://3.113.16.186:8065";
+const mattermostUrl = "https://mattermost.kotukotu-rare.com";
 // メッセージを投稿したいチャンネルのID
 const channelId = "xgmabqyru7n38r8roqqb4iuaua";
 // ユーザートークンをlocalStorageから取得 もし登録前であれば登録モーダルを表示し、returnします。
