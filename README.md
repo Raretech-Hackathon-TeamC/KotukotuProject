@@ -16,3 +16,5 @@ docker-compose -f docker-compose.yml restart app
 
 ### make admin account
 ./.migration.sh
+
+※起動後、管理画面にて名言・実績を登録する必要があります
